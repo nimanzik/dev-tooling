@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Config files
+*config*.yaml
+*config*.json
+!sample_config.yaml
+!sample_config.json
