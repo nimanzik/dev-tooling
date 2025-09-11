@@ -1,4 +1,3 @@
-# Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 WORKDIR /app
@@ -13,10 +12,10 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --locked --no-install-project --no-dev
 
-# Then, add the rest of the project source code
+# Add the rest of the project source code and install it
+# separately from its dependencies (allows optimal layer caching)
 COPY . /app
 
-# Install project separately from its dependencies (allows optimal layer caching)
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
