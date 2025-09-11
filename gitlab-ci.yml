@@ -1,0 +1,57 @@
+stages:
+  - lint-format
+  - type-check
+  - test
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+variables:
+  UV_CACHE_DIR: .uv-cache
+  UV_LINK_MODE: copy   # Avoids hard-link issues inside GitLab runners
+  UV_VERSION: "0.8"
+  PYTHON_VERSION: "3.12"
+  BASE_LAYER: bookworm-slim
+
+default:
+  image: ghcr.io/astral-sh/uv:${UV_VERSION}-python${PYTHON_VERSION}-${BASE_LAYER}
+  cache:
+    key:
+      files:
+        - uv.lock
+    paths:
+      - $UV_CACHE_DIR
+
+.base-uv:
+  after_script:
+    - uv cache prune --ci  # Prune aggressively before saving cache
+
+ruff:
+  stage: lint-format
+  extends: .base-uv
+  script:
+    - echo "Running ruff linter..."
+    - uvx ruff check src/
+    - echo "Running ruff formatter..."
+    - uvx ruff format --check src/
+
+ty:
+  stage: type-check
+  extends: .base-uv
+  needs: []
+  before_script:
+    - uv sync --frozen --dev
+  script:
+    - echo "Running ty type checker..."
+    - uv run ty check src/
+
+pytest:
+  stage: test
+  extends: .base-uv
+  needs: []
+  before_script:
+    - uv sync --frozen --dev
+  script:
+    - echo "Running tests using pytest..."
+    - uv run pytest -v --tb=short tests/
