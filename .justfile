@@ -13,7 +13,7 @@ format:
     @uv run ruff format src/
 
 typecheck:
-    @uv run ty src/
+    @uv run ty check src/
 
 test:
     @uv run pytest tests -v
