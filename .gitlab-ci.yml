@@ -1,11 +1,17 @@
 stages:
+  - debug
   - lint-format
   - type-check
   - test
 
 workflow:
   rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^(\[Draft\]|\(Draft\)|Draft:)/
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_REF_PROTECTED == "true"
+    - if: $CI_COMMIT_TAG
 
 variables:
   UV_CACHE_DIR: .uv-cache
@@ -22,6 +28,16 @@ default:
         - uv.lock
     paths:
       - $UV_CACHE_DIR
+
+debug:
+  stage: debug
+  script:
+    - echo "Listing CI environment variables..."
+    - printenv | sort
+    - echo "Checking Python version..."
+    - python --version
+    - echo "Checking uv version..."
+    - uv --version
 
 .base-uv:
   after_script:
@@ -41,7 +57,7 @@ ty:
   extends: .base-uv
   needs: []
   before_script:
-    - uv sync --frozen --dev
+    - uv sync --frozen --dev --extra torch-cpu
   script:
     - echo "Running ty type checker..."
     - uv run ty check src/
@@ -51,7 +67,7 @@ pytest:
   extends: .base-uv
   needs: []
   before_script:
-    - uv sync --frozen --dev
+    - uv sync --frozen --dev --extra torch-cpu
   script:
     - echo "Running tests using pytest..."
     - uv run pytest -v --tb=short tests/
