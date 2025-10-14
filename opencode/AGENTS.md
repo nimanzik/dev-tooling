@@ -2,12 +2,12 @@
 
 ## Commands
 
-- **Lint**: `uv run ruff check --fix src/`
-- **Format**: `uv run ruff format src/`
-- **Typecheck**: `uv run ty check src/`
-- **Test all**: `uv run pytest tests -v`
-- **Test single**: `uv run pytest tests/path/to/test_file.py::test_function_name -v`
-- **Clean**: `just clean` (removes cache directories)
+- **Linting**: `uv run ruff check --fix src/`
+- **Formatting**: `uv run ruff format src/`
+- **Type checking**: `uv run ty check src/` (DO NOT use mypy)
+- **Testing all**: `uv run pytest tests -v`
+- **Testing single**: `uv run pytest tests/path/to/test_file.py::test_function_name -v`
+- **Cleaning up**: `just clean` (removes cache directories)
 
 ## Code style
 
