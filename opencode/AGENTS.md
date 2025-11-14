@@ -22,7 +22,7 @@
 
 ## Code testing standards
 
-- Write all Python tests using `pytest`. DO NOU use `unittest`
+- Write all Python tests using `pytest`. DO NOT use `unittest`
 - Use descriptive function names starting with `test_`
 - Prefer fixtures over setup/teardown methods
 - Use assert statements directly, not `self.assertEqual`
@@ -38,3 +38,4 @@
 - DO NOT add any dependencies by yoursef. Ask me, so I will install them.
 - All type hints must be complete and accurate.
 - Tests under `tests/` mirror `src/<project-name>/` structure.
+- When you need to search docs, use `context7` tools.
