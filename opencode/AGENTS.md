@@ -54,13 +54,17 @@
 - If `markdownlint-cli` is not installed, DO NOT install it by yoursef. Ask me, so I will install it.
 - Fix all linting issues before completing the task.
 
+## MCP Servers
+
+- When you need to search docs, use `context7` tools.
+- Always use `context7` when code generation, setup or configuration steps, or library/API documentation are needed. This means you should automatically use the Context7 MCP tools to resolve library ID and get library docs without user having to explicitly ask.
+
 ## Notes
 
 - Use `uv` for all Python commands (not pip/poetry).
 - DO NOT add any dependencies by yoursef. Ask me, so I will install them.
 - All type hints must be complete and accurate.
 - Tests under `tests/` mirror `src/<project-name>/` structure.
-- When you need to search docs, use `context7` tools.
 - DO NOT abbreviate words unless it would result in ridiculously long names.
 - Use British English spelling (e.g., "modelling", "optimise", "colour").
 - When writing docstrings, prioritise clarity over brevity.
