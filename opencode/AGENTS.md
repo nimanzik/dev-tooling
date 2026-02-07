@@ -48,10 +48,18 @@
 ## Code testing standards
 
 - Write all Python tests using `pytest`. DO NOT use `unittest`.
+<<<<<<< HEAD
 - Use descriptive function names starting with `test_`.
 - Prefer fixtures over setup/teardown methods.
 - Use assert statements directly, not `self.assertEqual`.
 - Tests under `tests/` mirror `src/<project-name>/` structure.
+=======
+- Tests should be placed in a `tests/` directory at the root of the project.
+- If a module contains submodules, create a corresponding subdirectory as `tests/test_<module-name>/` and place tests for submodules there.
+- Use descriptive function names starting with `test_`.
+- Prefer fixtures over setup/teardown methods.
+- Use assert statements directly, not `self.assertEqual`.
+>>>>>>> main
 
 ## Git commits
 
@@ -73,7 +81,12 @@
 ## Notes
 
 - Use `uv` for all Python commands (not pip or poetry).
+<<<<<<< HEAD
 - DO NOT add any dependencies by yoursef. Ask me so I will add them.
 - DO NOT run git operations without asking. You may do only read-only git operations without asking, e.g. `git log`, `git blame`.
+=======
+- DO NOT add any dependencies by yourself without asking. If you need a new library, ask me first, and I will add it to the project.
+- DO NOT run git operations that change the git state, e.g. `git add`, `git commit`, `git push`. You may do ONLY read-only git operations without asking, e.g. `git status`, `git diff`, `git show`, `git status`.
+>>>>>>> main
 - Always prioritise code quality, readability, and maintainability.
 - When in doubt, ask me for clarification.
