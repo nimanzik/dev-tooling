@@ -1,4 +1,5 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "context7": {
       "type": "local",
@@ -17,5 +18,10 @@
       "git push*": "deny"
     }
   },
-  "$schema": "https://opencode.ai/config.json"
+  "plugin": [
+      "@franlol/opencode-md-table-formatter@0.0.3",
+      "opencode-wakatime",
+      "@zenobius/opencode-skillful",
+      "@plannotator/opencode@latest"
+  ]
 }
