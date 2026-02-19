@@ -1,7 +1,8 @@
 # dev-tooling
 
-A collection of reusable configuration files and CI/CD setups for Python projects,
-covering developer tooling, CI pipelines, and Docker workflows.
+This repository contains a collection of reusable configuration files and CI/CD
+setups for Python projects, covering developer tooling, CI pipelines, and Docker
+workflows.
 
 ## Contents
 
