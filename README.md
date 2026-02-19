@@ -1,23 +1,25 @@
-# dev-configs
+# dev-tooling
 
-A collection of reusable configuration files and CI/CD setups for Python projects.
+A collection of reusable configuration files and CI/CD setups for Python projects,
+covering developer tooling, CI pipelines, and Docker workflows.
 
 ## Contents
 
 ### Python Code Quality
 
-- `ruff.toml`: `ruff` linter and formatter configuration
+- `astral/ruff.toml`: `ruff` linter and formatter configuration
   - NumPy-style docstrings
   - Type checking rules enabled
   - ...
-- `mypy.ini`: `mypy` type checker configuration
+- `mypy/mypy.ini`: `mypy` type checker configuration
   - Strict type checking enabled
   - Pydantic and NumPy plugins configured
   - ...
+- `prek/.pre-commit-config.yaml`: Pre-commit hooks and tooling
 
 ### CI/CD Pipelines
 
-- `gitlab-ci.yml`: GitLab CI pipeline
+- `gitlab/.gitlab-ci.yml`: GitLab CI pipeline
   - Multi-stage pipeline (lint-format, type-check, test)
   - Optimized caching with `uv`
 - `github/workflows/ci.yml`: GitHub Actions workflow
@@ -26,15 +28,16 @@ A collection of reusable configuration files and CI/CD setups for Python project
 
 ### Docker
 
-- `Dockerfile`: Multi-stage Python container
+- `docker/Dockerfile`: Multi-stage Python container
   - Uses `uv` for dependency management
   - Optimized layer caching
   - Includes Streamlit application setup
-- `compose.yaml`: Docker Compose configuration for dashboard service
+- `docker/compose.yaml`: Docker Compose configuration for dashboard service
+- `docker/.dockerignore`: Docker ignore rules
 
 ### Development Tools
 
-- `.justfile`: Just command runner recipes
+- `just/.justfile`: Just command runner recipes
   - Remove cache directories
   - Run `ruff` linter with auto-fix
   - Format code with `ruff`
