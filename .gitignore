@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Vim swap files
+*.swp
+
 # Config files
 *config*.yaml
 *config*.json
