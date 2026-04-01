@@ -12,11 +12,12 @@ Commits-style subject.
 
 `<type>(<scope>): <summary>`
 
-- `type` REQUIRED. Use `feat` for new features, `fix` for bug fixes. See the
-  following section for a list of commit types.
-- `scope` OPTIONAL. Short noun in parentheses for the affected area (e.g.,
+- `type` is REQUIRED. Use `feat` for new features, `fix` for bug fixes. See
+  the following section for a list of commit types.
+- `scope` is OPTIONAL. Short noun in parentheses for the affected area (e.g.,
   `api`, `parser`, `ui`).
-- `summary` REQUIRED. Short, imperative, maximum 72 chars, no trailing period.
+- `summary` is REQUIRED. Short, present tense, imperative, maximum 72 chars,
+  no trailing period.
 
 ## Commit Types
 
@@ -40,7 +41,6 @@ Commits-style subject.
   short paragraphs.
 - Do NOT include breaking-change markers or footers.
 - Do NOT add sign-offs (no `Signed-off-by`).
-- Only commit; do NOT push.
 - If it is unclear whether a file should be included, ask the user which
   files to commit.
 - If commit fails due to hooks, fix and create NEW commit (do not amend).
@@ -56,8 +56,9 @@ Commits-style subject.
 
 1. Infer from the prompt if the user provided specific file paths/globs
    and/or additional instructions.
-2. Review `git status --porcelain` and `git diff` to understand the current
-   changes (limit to argument-specified files if provided).
+2. Review `git status --porcelain`, `git diff --staged` (if files are stages),
+   and `git diff` (if nothing staged) to understand the current changes (limit
+   to argument-specified files if provided).
 3. (Optional) Run `git log -n 20 --pretty=format:%s` to see commonly used
    scopes.
 4. If there are ambiguous extra files, ask the user for clarification before
@@ -79,8 +80,10 @@ Commits-style subject.
 
 ## Git Safety Protocol
 
-- NEVER update git config.
-- NEVER run destructive commands (--force, hard reset) without explicit
-  request.
-- NEVER skip hooks (`--no-verify`) unless user asks.
+- NEVER run `git config` command to set/replace/unset options.
+- NEVER push without explicit request; only commit.
 - NEVER force push to main/master branch.
+- NEVER run destructive commands (`--force`, hard reset) without explicit
+  request.
+- NEVER commit secrets (`.env`, `credentials.json`, private keys).
+- NEVER skip hooks (`--no-verify`) unless user asks.
