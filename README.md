@@ -1,46 +1,94 @@
 # dev-tooling
 
-This repository contains a collection of reusable configuration files and CI/CD
-setups for Python projects, covering developer tooling, CI pipelines, and Docker
-workflows.
+My personalized collection of reusable configuration files, CI/CD pipelines, agent configurations, and custom skills for Python project development and automation.
 
 ## Contents
 
-### Python Code Quality
+### 📋 Code Quality & Linting
 
-- `astral/ruff.toml`: `ruff` linter and formatter configuration
+- **`astral/ruff.toml`**: `ruff` linter and formatter configuration
   - NumPy-style docstrings
   - Type checking rules enabled
-  - ...
-- `mypy/mypy.ini`: `mypy` type checker configuration
+  - Line length: 88 characters
+
+- **`mypy/mypy.ini`**: `mypy` type checker configuration
   - Strict type checking enabled
   - Pydantic and NumPy plugins configured
-  - ...
-- `prek/.pre-commit-config.yaml`: Pre-commit hooks and tooling
 
-### CI/CD Pipelines
+- **`prek/.pre-commit-config.yaml`**: Pre-commit hooks
+  - Runs `ruff` check and format automatically before commits
 
-- `gitlab/.gitlab-ci.yml`: GitLab CI pipeline
-  - Multi-stage pipeline (lint-format, type-check, test)
+### 🔄 CI/CD Pipelines
+
+- **`github/workflows/`**: GitHub Actions workflows
+  - Multi-stage pipeline: lint-format → type-check → test
+  - Uses `uv` for optimized dependency management
+
+- **`gitlab/.gitlab-ci.yml`**: GitLab CI pipeline
+  - Equivalent multi-stage setup for GitLab environments
   - Optimized caching with `uv`
-- `github/workflows/ci.yml`: GitHub Actions workflow
-  - Runs linting, formatting, type checking, and tests
-  - Uses `uv` for fast dependency management
 
-### Docker
+### 🐳 Docker
 
-- `docker/Dockerfile`: Multi-stage Python container
+- **`docker/Dockerfile`**: Multi-stage Python container
   - Uses `uv` for dependency management
   - Optimized layer caching
-  - Includes Streamlit application setup
-- `docker/compose.yaml`: Docker Compose configuration for dashboard service
-- `docker/.dockerignore`: Docker ignore rules
+  - Supports Streamlit applications
 
-### Development Tools
+- **`docker/compose.yaml`**: Docker Compose configuration
+  - Dashboard service setup
 
-- `just/.justfile`: Just command runner recipes
-  - Remove cache directories
-  - Run `ruff` linter with auto-fix
-  - Format code with `ruff`
-  - Run `ty` type checker
-  - Run `pytest` tests
+- **`docker/.dockerignore`**: Docker ignore rules
+
+### 🛠️ Development Tools
+
+- **`just/.justfile`**: Just command runner recipes
+  - `clean`: Remove cache directories (`__pycache__`, `.pytest_cache`, etc.)
+  - `lint`: Run `ruff check` with auto-fix
+  - `format`: Format code with `ruff`
+  - `type-check`: Run `mypy` type checker
+  - `test`: Run `pytest` test suite
+
+### 👥 Agents
+
+- **`agents/AGENTS.md`**: Agent guidelines and standards for Python projects
+  - Code style conventions (Python, imports, types, docstrings)
+  - Testing standards with pytest
+  - Git commit conventions
+  - High-impact action approval requirements
+  - Development workflow rules
+
+- **`agents/copilot/`**: Copilot agent configuration
+  - `mcp-config.json`: MCP server configuration
+
+- **`agents/opencode/`**: OpenCode agent configuration
+  - Agent definitions and command workflows
+  - Code reviewer and documentation writer agents
+
+- **`agents/pi/`**: Pi coding agent extensions and themes
+  - **Extensions**: Custom TUI tools for agent workflows (answer, btw, context, files, go-to-bed, notify, prompt-editor, review, session-breakdown, todos)
+  - **Themes**: Custom visual themes (nightowl)
+
+### 🎓 Skills
+
+Custom skills extend agent capabilities with specialized knowledge and workflows:
+
+- **`alphaxiv-paper-lookup`**: Look up arXiv papers on alphaxiv.org for structured AI-generated summaries
+
+- **`commit`**: Git commit with conventional commit message analysis and validation
+
+- **`context7`**: Retrieve up-to-date documentation for software libraries, frameworks, and components
+
+- **`documentation-writer`**: Diátaxis Documentation Expert for creating high-quality technical documentation
+
+- **`find-skills`**: Discover and install agent skills based on user needs
+
+- **`git-commit`**: Execute git commits with intelligent staging and conventional commit message generation
+
+- **`github`**: Interact with GitHub using the `gh` CLI (issues, PRs, CI runs, advanced queries)
+
+- **`self-improve`**: End-of-session retrospective for identifying improvements to agent config, tests, and docs
+
+- **`skill-creator`**: Guide for creating effective skills that extend agent capabilities
+
+
