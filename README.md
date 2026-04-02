@@ -51,7 +51,7 @@ My personalized collection of reusable configuration files, CI/CD pipelines, age
 
 ### 👥 Agents
 
-- **`agents/AGENTS.md`**: Agent guidelines and standards for Python projects
+- **[`agents/AGENTS.md`](agents/AGENTS.md)**: Agent guidelines and standards for Python projects
   - Code style conventions (Python, imports, types, docstrings)
   - Testing standards with pytest
   - Git commit conventions
@@ -73,22 +73,22 @@ My personalized collection of reusable configuration files, CI/CD pipelines, age
 
 Custom skills extend agent capabilities with specialized knowledge and workflows:
 
-- **`alphaxiv-paper-lookup`**: Look up arXiv papers on alphaxiv.org for structured AI-generated summaries
+- **[`alphaxiv-paper-lookup`](skills/alphaxiv-paper-lookup/)**: Look up arXiv papers on alphaxiv.org for structured AI-generated summaries
 
-- **`commit`**: Git commit with conventional commit message analysis and validation
+- **[`commit`](skills/commit/)**: Git commit with conventional commit message analysis and validation
 
-- **`context7`**: Retrieve up-to-date documentation for software libraries, frameworks, and components
+- **[`context7`](skills/context7/)**: Retrieve up-to-date documentation for software libraries, frameworks, and components
 
-- **`documentation-writer`**: Diátaxis Documentation Expert for creating high-quality technical documentation
+- **[`documentation-writer`](skills/documentation-writer/)**: Diátaxis Documentation Expert for creating high-quality technical documentation
 
-- **`find-skills`**: Discover and install agent skills based on user needs
+- **[`find-skills`](skills/find-skills/)**: Discover and install agent skills based on user needs
 
-- **`git-commit`**: Execute git commits with intelligent staging and conventional commit message generation
+- **[`git-commit`](skills/git-commit/)**: Execute git commits with intelligent staging and conventional commit message generation
 
-- **`github`**: Interact with GitHub using the `gh` CLI (issues, PRs, CI runs, advanced queries)
+- **[`github`](skills/github/)**: Interact with GitHub using the `gh` CLI (issues, PRs, CI runs, advanced queries)
 
-- **`self-improve`**: End-of-session retrospective for identifying improvements to agent config, tests, and docs
+- **[`self-improve`](skills/self-improve/)**: End-of-session retrospective for identifying improvements to agent config, tests, and docs
 
-- **`skill-creator`**: Guide for creating effective skills that extend agent capabilities
+- **[`skill-creator`](skills/skill-creator/)**: Guide for creating effective skills that extend agent capabilities
 
 
