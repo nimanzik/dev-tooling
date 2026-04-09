@@ -71,7 +71,7 @@ My personalised collection of reusable configuration files, CI/CD pipelines, age
 
 ### 🎓 Skills
 
-Custom skills extend agent capabilities with specialized knowledge and workflows:
+Custom skills extend agent capabilities with specialised knowledge and workflows:
 
 - [`alphaxiv-paper-lookup`](skills/alphaxiv-paper-lookup/): Look up arXiv papers on alphaxiv.org for structured AI-generated summaries
 
