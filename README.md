@@ -26,7 +26,7 @@ My personalised collection of reusable configuration files, CI/CD pipelines, age
 
 - `gitlab/.gitlab-ci.yml`: GitLab CI pipeline
   - Equivalent multi-stage setup for GitLab environments
-  - Optimized caching with `uv`
+  - Optimised caching with `uv`
 
 ### 🐳 Docker
 
@@ -46,7 +46,7 @@ My personalised collection of reusable configuration files, CI/CD pipelines, age
   - `clean`: Remove cache directories (`__pycache__`, `.pytest_cache`, etc.)
   - `lint`: Run `ruff check` with auto-fix
   - `format`: Format code with `ruff`
-  - `type-check`: Run `mypy` type checker
+  - `type-check`: Run `mypy` type-checker
   - `test`: Run `pytest` test suite
 
 ### 👥 Agents
