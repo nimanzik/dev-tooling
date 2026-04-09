@@ -16,16 +16,16 @@ Commits-style subject.
 - If request is ambiguous (e.g., "ship this", "submit this"), ask:
   "Do you want me to stop after commit, or also push?"
 
-## Format
+## Format (header)
 
-`<type>(<scope>): <summary>`
+`<type>(<scope>): <description>`
 
 - `type` is REQUIRED. Use `feat` for new features, `fix` for bug fixes etc.
   See the following section for a list of commit types.
 - `scope` is OPTIONAL. Short noun in parentheses for the affected area (e.g.,
   `api`, `parser`, `ui`).
-- `summary` is REQUIRED. Short, present tense, imperative.
-- Maximum 50 characters, no trailing period.
+- `description` is REQUIRED. Short, present tense, imperative.
+- Header must be maximum 50 characters, no trailing period.
 
 ## Commit Types
 
