@@ -1,6 +1,6 @@
 # dev-tooling
 
-My personalized collection of reusable configuration files, CI/CD pipelines, agent configurations, and custom skills for Python project development and automation.
+My personalised collection of reusable configuration files, CI/CD pipelines, agent configurations, and custom skills for Python project development and automation.
 
 ## Contents
 
@@ -11,7 +11,7 @@ My personalized collection of reusable configuration files, CI/CD pipelines, age
   - Type checking rules enabled
   - Line length: 88 characters
 
-- `mypy/mypy.ini`: `mypy` type checker configuration
+- `mypy/mypy.ini`: `mypy` type-checker configuration
   - Strict type checking enabled
   - Pydantic and NumPy plugins configured
 
@@ -22,7 +22,7 @@ My personalized collection of reusable configuration files, CI/CD pipelines, age
 
 - `github/workflows/`: GitHub Actions workflows
   - Multi-stage pipeline: lint-format → type-check → test
-  - Uses `uv` for optimized dependency management
+  - Uses `uv` for optimised dependency management
 
 - `gitlab/.gitlab-ci.yml`: GitLab CI pipeline
   - Equivalent multi-stage setup for GitLab environments
@@ -32,11 +32,11 @@ My personalized collection of reusable configuration files, CI/CD pipelines, age
 
 - `docker/Dockerfile`: Multi-stage Python container
   - Uses `uv` for dependency management
-  - Optimized layer caching
+  - Optimised layer caching
   - Supports Streamlit applications
 
 - `docker/compose.yaml`: Docker Compose configuration
-  - Dashboard service setup
+  - Dashboard service set-up
 
 - `docker/.dockerignore`: Docker ignore rules
 
