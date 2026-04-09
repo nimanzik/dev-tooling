@@ -12,7 +12,7 @@ lint:
 format:
     @uv run ruff format src/
 
-typecheck:
+type-check:
     @uv run ty check src/
 
 test:

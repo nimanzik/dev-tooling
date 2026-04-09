@@ -46,7 +46,7 @@ My personalised collection of reusable configuration files, CI/CD pipelines, age
   - `clean`: Remove cache directories (`__pycache__`, `.pytest_cache`, etc.)
   - `lint`: Run `ruff check` with auto-fix
   - `format`: Format code with `ruff`
-  - `type-check`: Run `mypy` type-checker
+  - `type-check`: Run `ty` type-checker
   - `test`: Run `pytest` test suite
 
 ### 👥 Agents
