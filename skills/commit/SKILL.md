@@ -20,12 +20,12 @@ Commits-style subject.
 
 `<type>(<scope>): <summary>`
 
-- `type` is REQUIRED. Use `feat` for new features, `fix` for bug fixes. See
-  the following section for a list of commit types.
+- `type` is REQUIRED. Use `feat` for new features, `fix` for bug fixes etc.
+  See the following section for a list of commit types.
 - `scope` is OPTIONAL. Short noun in parentheses for the affected area (e.g.,
   `api`, `parser`, `ui`).
-- `summary` is REQUIRED. Short, present tense, imperative, maximum 72 chars,
-  no trailing period.
+- `summary` is REQUIRED. Short, present tense, imperative.
+- Maximum 50 characters, no trailing period.
 
 ## Commit Types
 
