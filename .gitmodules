@@ -1,0 +1,3 @@
+[submodule "agents/pi/third_party/pi-tutorial"]
+	path = agents/pi/third_party/pi-tutorial
+	url = https://github.com/earendil-works/pi-tutorial
