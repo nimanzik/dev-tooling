@@ -4,3 +4,6 @@
 [submodule "agents/pi/third_party/dotpi"]
 	path = agents/pi/third_party/dotpi
 	url = https://github.com/Michaelliv/dotpi.git
+[submodule "agents/pi/third_party/pi-review"]
+	path = agents/pi/third_party/pi-review
+	url = https://github.com/earendil-works/pi-review.git
