@@ -7,3 +7,7 @@
 [submodule "agents/pi/third_party/pi-review"]
 	path = agents/pi/third_party/pi-review
 	url = https://github.com/earendil-works/pi-review.git
+[submodule "agents/pi/third_party/agent-stuff"]
+	path = agents/pi/third_party/agent-stuff
+	url = https://github.com/mitsuhiko/agent-stuff.git
+	branch = main
