@@ -10,4 +10,4 @@
 [submodule "agents/pi/third_party/agent-stuff"]
 	path = agents/pi/third_party/agent-stuff
 	url = git@github.com:nimanzik/agent-stuff.git
-	branch = main
+	branch = nima/custom-changes
