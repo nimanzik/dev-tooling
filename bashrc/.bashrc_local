@@ -1,0 +1,20 @@
+# Locales -- let's use 'length four' convention
+
+export conf=${HOME}/.config
+export data=${HOME}/datasets
+export docs=${HOME}/Documents
+export down=${HOME}/Downloads
+export dvic=${HOME}/devices
+export play=${HOME}/playground
+export proj=${HOME}/projects
+export reso=${HOME}/resources
+
+export diss=${HOME}/Documents/diss_theses
+export book=${HOME}/Documents/ebooks
+export note=${HOME}/Documents/notes
+
+export PYTHONPATH=${PYTHONPATH}:${HOME}/playground
+export PYTHONPATH=${HOME}/projects/bdim:${HOME}/projects/bdim/ailib_research
+export PYTHONPATH=${PYTHONPATH}:${HOME}/projects/bdim/ezu_sleeve_data_investigation
+export PYTHONPATH=${PYTHONPATH}:${HOME}/projects/bdim/fanuc_showcase
+export PYTHONPATH=${PYTHONPATH}:${HOME}/projects/bdim/aid_nocke_v3

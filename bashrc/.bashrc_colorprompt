@@ -1,0 +1,97 @@
+# :author: Sebastian Heimann <sebastian.heimann(at)uni-potsdam.de>
+# :update: 29 Dec 2022, Nima Nooshiri <nima.nooshiri(at)gmail.com>
+#
+# =============================================================================
+# Bash Prompt Escape Sequences (following list is not complete):
+#
+#   \h    the hostname up to the first `.'
+#   \H    the hostname
+#   \u    the username of the current user
+#   \w    the current working directory
+#   \W    the basename of the current working directory
+#   \!    the history number of this command
+#   \#    the command number of this command
+#   \$    if the effective UID is 0, a #, otherwise a $
+#   \[    begin a sequence of non-printing characters, which could be used to
+#         embed a terminal con­trol sequence into the prompt
+#   \]    end a sequence of non-printing characters
+#
+# To find out more about bash prompt escape sequences, see:
+# * http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+#
+# References:
+# * http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/
+#
+#
+# Tips for bash colors and formatting:
+# * https://misc.flogisoft.com/bash/tip_colors_and_formatting
+# 
+# 
+# Display unicodes in vim:
+# Since bash 4.2, unicode characters can be shown by `\u` followed by 4
+# hexadecimal digits in a `$'...'` string. Example: $(printf '\u219D')
+#   
+# References:
+# * https://www.booleanworld.com/customizing-coloring-bash-prompt/
+#
+# =============================================================================
+
+# Bash colors
+black="\[\033[0;30m\]"
+red="\[\033[0;31m\]"
+green="\[\033[0;32m\]"
+yellow="\[\033[0;33m\]"
+blue="\[\033[0;34m\]"
+purple="\[\033[0;35m\]"
+cyan="\[\033[0;36m\]"
+lgray="\[\033[0;37m\]"
+
+dgray="\[\033[1;30m\]"
+lred="\[\033[1;31m\]"
+lgreen="\[\033[1;32m\]"
+lyellow="\[\033[1;33m\]"
+lblue="\[\033[1;34m\]"
+lpurple="\[\033[1;35m\]"
+lcyan="\[\033[1;36m\]"
+white="\[\033[1;37m\]"
+
+# My custom colors
+cgreen='\[\e[0;38;5;28m\]'
+camber='\[\e[0;38;5;220m\]'
+cblue='\[\e[0;38;5;32m\]'
+cpurple='\[\e[0;38;5;177m\]'
+ccolor1='\[\e[0;38;5;220m\]'
+ccolor2='\[\e[0;38;5;39m\]'
+ccolor3='\[\e[0;38;5;40m\]'
+
+# Normal, bold, underlined term color
+normal="\[\e[0;0m\]"
+bold="\[\033[0;1m\]"
+underlined="\[\033[0;4m\]"
+
+# Select colors
+colors=( $camber $cblue $cpurple $cyan $green $red )
+
+# Set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+if [ "$color_prompt" = yes ]; then
+    hostname=`hostnamectl hostname`
+    cprom=${colors[`expr ${#hostname} % ${#colors[@]}`]}
+    PS1="$cprom[\#]$normal \h$cprom in$normal \W$cprom $(printf '\u21A6')$normal "
+else
+    PS1="[\!] \h:\W > "
+fi
+unset color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+

@@ -1,0 +1,11 @@
+Xft.dpi: 192
+!URxvt.font: xft:FiraMono-Regular:size=12
+urxvt.font: xft:Sans-Regular:size=7
+Xft.autohint: 0
+Xft.lcdfilter:  lcddefault
+Xft.hintstyle:  hintfull
+Xft.hinting: 1
+Xft.antialias: 1
+Xft.rgba: rgb
+rofi.dpi: 192
+

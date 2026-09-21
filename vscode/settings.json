@@ -1,0 +1,181 @@
+{
+    "editor.fontFamily": "'IBM Plex Mono', 'Fira Code Light', 'JetBrains Mono Light', 'Droid Sans Mono', 'monospace', monospace",
+    "editor.fontLigatures": true,
+    "editor.rulers": [79, 88],
+    "editor.renderWhitespace": "none",
+    "editor.autoClosingBrackets": "always",
+    "editor.autoClosingQuotes": "always",
+    "editor.cursorBlinking": "smooth",
+    "editor.parameterHints.enabled": false,
+    "editor.tokenColorCustomizations": {
+        "[Atom Material Theme]": {
+            "types": "#4EC9B0",
+            "textMateRules": []
+        },
+        "textMateRules": [
+            {
+                "scope": "comment",
+                "settings": {
+                    "fontStyle": "italic",
+                }
+            },
+            {
+                "scope": "string.quoted.docstring.multi.python",
+                "settings": {
+                    // "foreground": "#CE9178",
+                }
+            }
+        ]
+    },
+    // Files
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.watcherExclude": {
+        "**/.venv/**": true,
+        "**/.mypy_cache/**": true,
+        "**/.pytest_cache/**": true,
+        "**/.ruff_cache/**": true,
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+    },
+    // Syntaxing
+    "typescript.tsserver.useSyntaxServer": "always",
+    // Python Analysis (Pylance + Pyright)
+    "python.analysis.autoImportCompletions": false,
+    "python.analysis.autoFormatStrings": true,
+    // Jupyter Notebook
+    "notebook.lineNumbers": "on",
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "right"
+    },
+    // Markdown
+    "markdown.marp.browser": "auto",
+    "markdown.marp.browserPath": "/usr/bin/google-chrome",
+    "markdown.marp.html": "default",
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    // Terminal
+    "terminal.integrated.cursorStyle": "underline",
+    "terminal.integrated.fontFamily": "\"JetBrainsMono Nerd Font\"",
+    "terminal.integrated.shellIntegration.enabled": true,
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.profiles.linux": {
+        "zsh": {
+            "path": "zsh",
+            "icon": "terminal",
+            "color": "terminal.ansiGreen",
+        }
+    },
+    "terminal.integrated.inheritEnv": true,
+
+    "workbench.editor.splitInGroupLayout": "vertical",
+    "code-runner.runInTerminal": true,
+    "breadcrumbs.enabled": false,
+    "python.defaultInterpreterPath": "/home/nima/.local/bin/python3.13",
+    // Settings Sync
+    "settingsSync.ignoredSettings": [
+        "editor.fontSize"
+    ],
+    "diffEditor.renderSideBySide": true,
+    "terminal.integrated.localEchoStyle": "dim",
+    "workbench.colorCustomizations": {
+        "[Monokai Pro (Filter Spectrum)]": {
+            "terminal.background": "#191919",
+        }
+    },
+    "mypy.runUsingActiveInterpreter": true,
+    "mypy.debugLogging": true,
+    "hediet.vscode-drawio.resizeImages": null,
+    // GitHub Copilot
+    "github.copilot.chat.codesearch.enabled": true,
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false,
+        "quarto": false
+    },
+    "gitlab.duoCodeSuggestions.enabled": true,
+    "window.titleBarStyle": "native",
+    "window.customTitleBarVisibility": "auto",
+    "chat.commandCenter.enabled": false,
+    "git.blame.statusBarItem.enabled": false,
+    "resmon.show.cputemp": true,
+    "workbench.panel.showLabels": false,
+    "docker.extension.enableComposeLanguageServer": false,
+    "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+    "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
+    "python.terminal.shellIntegration.enabled": false,
+    "files.associations": {
+        "*.env": "ini",
+        ".justfile": "plaintext"
+    },
+    "[dockercompose]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced",
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": true
+        },
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "[github-actions-workflow]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "python.analysis.inlayHints.callArgumentNames": "all",
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    "chat.mcp.gallery.enabled": true,
+    "chat.mcp.discovery.enabled": {
+        "windsurf": true
+    },
+    "terminal.integrated.fontSize": 13,
+    "github.copilot.chat.newWorkspace.useContext7": true,
+    "chat.mcp.serverSampling": {
+        "Global in Code: context7": {
+            "allowedModels": [
+                "copilot/claude-sonnet-4",
+                "copilot/claude-sonnet-4.5",
+                "copilot/gemini-2.5-pro"
+            ]
+        }
+    },
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "workbench.secondarySideBar.defaultVisibility": "visible",
+    "geminicodeassist.inlineSuggestions.enableAuto": true,
+    "http.systemCertificatesNode": true,
+    "chat.useAgentSkills": true,
+    "claudeCode.selectedModel": "default",
+    "claudeCode.useTerminal": true,
+    "python.languageServer": "Default",
+    "ty.disableLanguageServices": true,
+    "python-envs.terminal.showActivateButton": true,
+    "python-envs.terminal.autoActivationType": "shellStartup",
+    "chat.viewSessions.orientation": "stacked",
+    "editor.fontSize": 13,
+    "github.copilot.chat.copilotMemory.enabled": true,
+    "github.copilot.chat.githubMcpServer.enabled": true,
+    "github.copilot.chat.switchAgent.enabled": true,
+    "github.copilot.selectedCompletionModel": "",
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "editor.minimap.enabled": false,
+    // "python.terminal.activateEnvInCurrentTerminal": true,
+    // "python-envs.terminal.showActivateButton": true,
+    // "python-envs.alwaysUseUv": true,
+    // "python-envs.defaultEnvManager": "ms-python.python:venv",
+    //
+    // Deprecated configuration settings (updated: 6 Nov 2023, by Nima Nooshiri)
+    //
+    // "mypy-type-checker.showNotifications": "always",
+    // "python.linting.enabled": true,
+    // "python.linting.flake8Enabled": true,
+    // "python.linting.pycodestyleEnabled": false,
+    // "python.linting.pylintEnabled": false,
+    // "python.linting.mypyEnabled": true
+}

@@ -1,0 +1,82 @@
+#
+# Prompt before any removal and overwrite
+#
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+#
+# Some more ls aliases
+#
+alias ll='ls -lF'
+alias la='ls -lFA'
+alias l='ls -CF'
+alias l1='ls -1F'
+
+#
+# Gnome input-output aliases
+#
+alias rename='gio rename'
+
+#
+# Customised command to open files
+#
+custom_open () { gio open "$@" > /dev/null 2>&1 & }
+alias open='custom_open'
+alias go='custom_open'
+
+# mygedit () { gedit "$@" > /dev/null 2>&1 & }
+# alias gedit='mygedit'
+
+#
+# Current working directory
+#
+mycd () {
+    \cd "$@"
+    echo $PWD > ~/.cwd
+}
+# alias cd='mycd'
+
+if [ -f ~/.cwd ]; then
+    CWD=`cat ~/.cwd`
+    if [ -d "$CWD" ]; then
+        \cd "$CWD"
+    fi
+fi
+
+#
+# Use GNOME settings in i3
+#
+alias gnome-control-center='env XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
+
+#
+# Conda/Mamba virtual envs activation and deactivation
+#
+myactivate () { mamba activate "$1" ; }
+alias act="myactivate"
+alias dact="mamba deactivate"
+
+#
+# Rename i3 workspaces
+#
+
+#myrename () { i3-msg "rename workspace to $1 " ; }
+myrename () {
+    if (($# == 0))
+    then
+        echo "Error: no args passed. Must be given either one or two"
+        return 1
+    elif (($# == 1))
+    then
+        i3-msg "rename workspace to $1"
+    elif (($# == 2))
+    then
+        i3-msg "rename workspace $1 to $2"
+    else
+        echo "Error: too many args passed. Must be given either one or two"
+        return 1
+    fi
+}
+
+alias i3-rws="myrename"
+

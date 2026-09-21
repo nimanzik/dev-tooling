@@ -1,0 +1,215 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "enable_language_server": true,
+  "ssh_connections": [
+    {
+      "host": "bdim-ai",
+      "args": [],
+      "projects": [{ "paths": ["/home/nima"] }],
+    },
+  ],
+  "git_panel": { "dock": "right",
+                 "tree_view": false },
+  "theme_overrides": {
+    "Tokyo Night": {
+      // "editor.background": "#16161e",
+      // "editor.gutter.background": "#16161e",
+      "element.hover": "#2a2a37",
+      "element.selected": "#353749",
+      "ghost_element.active": "#2a2a37",
+      "ghost_element.hover": "#24242e",
+      "ghost_element.selected": "#353749",
+      "tab.active_background": "#16161e",
+      "tab.inactive_background": "#0e0e15",
+      "tab_bar.background": "#0e0e15",
+      "text": "#787c99",
+      "syntax": {
+        "variable": { "color": "#C0CAF5" },
+        "attribute": { "color": "#add7ff" },
+        "function.decorator": { "color": "#7aa2f7" },
+        "function.method": { "color": "#CA0000" },
+      },
+    },
+  },
+  "scrollbar": { "git_diff": true },
+  "redact_private_values": false,
+  "session": { "trust_all_worktrees": false },
+  "show_edit_predictions": true,
+  "preview_tabs": {
+    "enable_preview_multibuffer_from_code_navigation": false,
+    "enable_preview_from_project_panel": true,
+    "enabled": true,
+  },
+  "tab_bar": {
+    "show_nav_history_buttons": true,
+    "show": true,
+    "show_pinned_tabs_in_separate_row": false,
+    "show_tab_bar_buttons": true,
+  },
+  "tabs": {
+    "file_icons": false,
+    "git_status": false,
+  },
+  "title_bar": {
+    "show_user_menu": true,
+    "show_menus": false,
+    "show_onboarding_banner": true,
+    "show_project_items": true,
+    "show_branch_name": true,
+    "show_branch_icon": true,
+  },
+  "debugger": { "button": true },
+  "search": { "button": true },
+  "diagnostics": { "button": true },
+  "status_bar": {
+    "cursor_position_button": true,
+    "active_encoding_button": "non_utf8",
+    "active_language_button": true,
+  },
+  "project_panel": { "dock": "right",
+                     "button": true },
+  "toolbar": {
+    "selections_menu": true,
+    "quick_actions": true,
+    "breadcrumbs": true,
+    "code_actions": true,
+    "agent_review": true,
+  },
+  "minimap": { "show": "auto" },
+  "autosave": "on_focus_change",
+  "edit_predictions": {
+    "mode": "eager",
+    "provider": "copilot",
+    "copilot": { "enable_next_edit_suggestions": true },
+  },
+  "agent_servers": {
+    "pi-acp": {
+      "type": "registry"
+    },
+    "github-copilot": { "type": "registry" },
+  },
+  "languages": {
+    "Python": {
+      "tasks": {
+        "prefer_lsp": true,
+      },
+      "completions": {},
+      "show_completion_documentation": false,
+      "language_servers": ["ty", "!pyright", "!basedpyright", "!pylsp", "..."],
+    },
+  },
+  "git": {
+    "enable_diff": true,
+    "enable_status": true,
+    "inline_blame": {
+      "enabled": false,
+    },
+  },
+  "context_servers": {
+    "mcp-server-gitlab": {
+      "enabled": true,
+      "remote": false,
+      "settings": {},
+    },
+  },
+  "agent": {
+    "dock": "left",
+    "show_turn_stats": true,
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-5.3-codex",
+    },
+    "default_model": {
+      "enable_thinking": true,
+      "effort": "medium",
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4.6",
+    },
+    "model_parameters": [],
+  },
+  "terminal": {
+    "button": true,
+    "font_size": 13.0,
+    "font_family": "JetBrainsMono Nerd Font",
+    "font_features": {
+      "zero": true, // slashed zero
+      "cv06": true, // m
+      "cv07": true, // w, W
+    },
+    "cursor_shape": "underline",
+    "blinking": "on",
+    "detect_venv": {
+      "on": {
+        "directories": [".venv"],
+        "activate_script": "default",
+      },
+    },
+  },
+  "base_keymap": "VSCode",
+  "show_signature_help_after_edits": false,
+  "auto_signature_help": false,
+  "cursor_blink": true,
+  "buffer_font_family": "IBM Plex Mono",
+  "buffer_font_size": 13,
+  "buffer_font_weight": 400,
+  "buffer_font_fallbacks": [
+    "IBM Plex Mono",
+    "FiraCode Nerd Font",
+    "JetBrainsMono Nerd Font",
+    "Inconsolata Nerd Font",
+  ],
+  "buffer_line_height": { "custom": 1.5 },
+  "buffer_font_features": {
+    // Use https://wakamaifondue.com/ to get a summary of my font
+    // "cv01": true, // a
+    // "cv02": true, // g
+    // "cv10": false, // l
+    // "ss01": false, // r
+    // "ss03": false, // &
+    // "ss05": true, // @
+    // IBM Plex font features
+    "zero": true, // slashed zero
+    "ss01": true, // a
+    "ss02": true, // g
+    "ss05": true, // ß
+  },
+  "file_types": {
+    "ini": ["*.env"],
+    "plaintext": [".justfile"],
+  },
+  "show_whitespaces": "none",
+  "ensure_final_newline_on_save": true,
+  "wrap_guides": [79, 88],
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Colored Zed Icons Theme Light",
+    "dark": "Zed (Default)",
+  },
+  "ui_font_size": 16,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Tokyo Night",
+  },
+  // Changes set in 'experimental.theme_overrides' apply to every theme
+  "experimental.theme_overrides": {
+    "syntax": {
+      "comment": { "font_style": "italic" },
+      "string.doc": { "color": "#51597d" },
+      "keyword": { "font_style": "normal" },
+    },
+  },
+}

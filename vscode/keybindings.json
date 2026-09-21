@@ -1,0 +1,53 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "ctrl+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "when": "terminalFocus",
+        "args": {
+            "text": "\\\r\n"
+        }
+    },
+    {
+        "key": "ctrl+shift+9",
+        "command": "editor.action.indentLines"
+    },
+    {
+        "key": "ctrl+shift+8",
+        "command": "editor.action.outdentLines"
+    },
+    {
+        "key": "ctrl+shift+alt+b",
+        "command": "simpleBrowser.show"
+    },
+    {
+        "key": "ctrl+alt+t",
+        "command": "workbench.action.terminal.new"
+    },
+    {
+        "key": "alt+m",
+        "command": "workbench.action.toggleMaximizedPanel"
+    },
+    {
+        "key": "ctrl+alt+e",
+        "command": "workbench.action.createTerminalEditor"
+    },
+    {
+        "key": "ctrl+shift+k",
+        "command": "-quarto.previewScript",
+        "when": "quartoRenderScriptActive"
+    },
+    {
+        "key": "ctrl+shift+k",
+        "command": "-quarto.preview",
+        "when": "!quartoRenderScriptActive"
+    },
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\\\r\n"
+        },
+        "when": "terminalFocus"
+    }
+]

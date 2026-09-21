@@ -1,0 +1,31 @@
+# Locales
+
+export cfg=${HOME}/.config
+export data=${HOME}/datasets
+export down=${HOME}/Downloads
+export dvc=${HOME}/devices
+export play=${HOME}/playgrounds
+export reso=${HOME}/resources
+
+export docs=${HOME}/Documents
+export book=${docs}/ebooks
+
+export proj=${HOME}/projects
+export pproj=${proj}/personal
+export learn=${pproj}/learning
+export dev=${pproj}/development
+export note=${pproj}/notes-vault
+
+export skills=${HOME}/.agents/skills
+export pigent=${HOME}/.pi/agent
+
+export bdim=${proj}/bdim
+export work=${bdim}/Team-AI
+
+export PATH="/home/nima/.local/bin:/home/nima/.cargo/bin:$PATH"
+export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:$(go env GOPATH)/bin"
+
+# export UV_NO_CACHE=true
+
+export EDITOR="vim"

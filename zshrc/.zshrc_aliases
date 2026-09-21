@@ -1,0 +1,125 @@
+#
+# Prompt before any removal and overwrite
+#
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+#
+# Some more ls aliases
+#
+alias ls="ls --group-directories-first --color=auto"
+alias l1="ls -1F"
+
+#
+# Gnome input-output aliases
+#
+alias rename='gio rename'
+
+#
+# Customised command to open files
+#
+custom_open () { gio open "$@" > /dev/null 2>&1 & }
+alias open='custom_open'
+# alias go='custom_open'
+
+#
+# Text editor
+#
+# mygedit () { gedit "$@" > /dev/null 2>&1 & }
+# alias gedit='mygedit'
+
+#
+# Current working directory
+#
+mycd () {
+    \cd "$@"
+    echo $PWD > ~/.cwd
+}
+# alias cd='mycd'
+
+if [ -f ~/.cwd ]; then
+    CWD=`cat ~/.cwd`
+    if [ -d "$CWD" ]; then
+        \cd "$CWD"
+    fi
+fi
+
+#
+# Use GNOME settings in i3
+#
+alias gnome-control-center='env XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
+
+#
+# Rename i3 workspaces
+#
+
+#myrename () { i3-msg "rename workspace to $1 " ; }
+myrename () {
+    if (($# == 0))
+    then
+        echo "Error: no args passed. Must be given either one or two"
+        return 1
+    elif (($# == 1))
+    then
+        i3-msg "rename workspace to $1"
+    elif (($# == 2))
+    then
+        i3-msg "rename workspace $1 to $2"
+    else
+        echo "Error: too many args passed. Must be given either one or two"
+        return 1
+    fi
+}
+
+alias i3-rws="myrename"
+
+#alias zellij-2v="zellij --layout compact-2vp"
+#alias zellij-2h="zellij --layout compact-2hp"
+
+# HiDPI/scaling settings not being properly applied to some sandboxed Snap apps
+# Chromium (updated: 10.12.2024)
+# VSCode (updated: 6.3.2025)
+# alias chromium="chromium --force-device-scale-factor=2 > /dev/null 2>&1 &"
+# alias code="code --force-device-scale-factor=2 > /dev/null 2>&1"
+
+#apps=(chromium code discord obsidian signal-desktop slack windsurf)
+#for app in ${apps[@]}; do
+#    alias ${app}="${app} --force-device-scale-factor=2 > /dev/null 2&>1 &"
+#done
+
+# `bat` is installed as `batcat` on Debian/Ubuntu systems due to a name clash with another package
+alias bat="batcat"
+
+alias vz="vim ~/.zshrc"
+alias vza="vim ~/.zshrc_aliases"
+alias vzl="vim ~/.zshrc_local"
+alias sz="source ~/.zshrc"
+
+#EZA_FLAGS=(
+#    "--git"
+#    "--group-directories-first"
+#    "--time-style=long-iso"
+#    "--icons"
+#    #"--no-permissions"
+#    "--no-user"
+#    "--group"
+#)
+#
+alias eza="eza --group-directories-first"
+
+alias apdate="sudo apt update"
+alias apgrade="sudo apt upgrade"
+alias alu="apt list --upgradable"
+
+alias symlink="ln -s"
+alias make-exe="chmod 700"
+alias skills-list="npx skills@latest list --global"
+alias skills-update="npx skills@latest update --global"
+alias pi-update="pi update && pi update --extensions"
+
+# Fix: scaling issue with some desktop apps
+# Pi command /diff-review
+alias pi="GDK_SCALE=1 GDK_DPI_SCALE=1 pi"
+# vscode
+alias code="GDK_SCALE=1 GDK_DPI_SCALE=1 code"

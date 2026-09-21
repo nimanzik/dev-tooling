@@ -1,0 +1,5 @@
+# In case the laptop is *left* of the external screen
+xrandr --dpi 192 --fb 7680x2160 --output HDMI-0 --mode 3840x2160 --pos 3840x0 --output DP-2 --scale 2 --panning 3840x2160+0+0
+
+# In case the laptop is right of the external screen
+# xrandr --dpi 192 --fb 7680x2160 --output HDMI-0 --mode 3840x2160 --output DP-2 --scale 2 --pos 3840x0 --panning 3840x2160+3840+0
