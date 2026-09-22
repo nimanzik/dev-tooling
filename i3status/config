@@ -66,15 +66,15 @@ order += "tztime time"
 
 wireless _first_ {
         # nf-fa-wifi: f1eb
-        format_up = " %quality %essid"
-        format_down = " down"
+        format_up = "  %quality %essid "
+        format_down = "  down "
 }
 
 ethernet _first_ {
         # if you use %speed, i3status requires root privileges
         # nf-fa-ethernet: ef44
-        format_up = " %ip (%speed)"
-        format_down = " down"
+        format_up = "  %ip (%speed) "
+        format_down = "  down "
 }
 
 battery all {
@@ -108,11 +108,11 @@ run_watch VPN {
 }
 
 tztime local {
-        format = " %a, %d %b %Y  %H:%M:%S %Z"
+        format = "  %a, %d %b %Y  %H:%M:%S %Z "
 }
 
 tztime dublin {
-        format = " %time"
+        format = "  %time "
         format_time = "%H:%M:%S %Z"
         timezone = "Europe/Dublin"
         hide_if_equals_localtime = false
@@ -120,39 +120,39 @@ tztime dublin {
 
 tztime date {
         # nf-cod-calendar: eab0
-        format = " %a, %d %b %Y"
+        format = "  %a, %d %b %Y "
 }
 
 tztime time {
 	# nf-fa-clock: f017
-        format = " %H:%M:%S %Z"
+        format = "  %H:%M:%S %Z "
 }
 
 load {
         # nf-fa-truck_monster: eeb8
-        format = "  %1min" 
+        format = "   %1min "
 }
 
 cpu_usage {
         # nf-oct-cpu: f4bc
-        format = "  %usage" 
+        format = "   %usage "
 }
 
 cpu_temperature 0 {
         # nf-fa_temperature_half: f2c9; nf-md_temperature_celsius: f0504
-        format = " %degrees󰔄" 
+        format = "  %degrees󰔄 "
 }
 
 disk "/" {
-        format = " %free"   # nf-fa-hard_drive: f0a0
-        prefix_type = "binary"
+        format = "  %free "   # nf-fa-hard_drive: f0a0
+        prefix_type = " binary "
 }
 
 volume master {
         # Volume-up: f028
-        format = "  %volume"
+        format = "   %volume "
         # Volume-off: f026
-        format_muted = " %volume" 
+        format_muted = "  %volume "
         # To obtain the name of the PulseAudio sink, use the following command:
         # $ pacmd list-sinks | grep name:
         #   name: <alsa_output.pci-0000_00_1f.3.analog-stereo>
