@@ -65,15 +65,16 @@ order += "tztime time"
 
 
 wireless _first_ {
-        # format_up = "  (%quality at %essid) %ip "
-        format_up = "  %quality at %essid "
-        format_down = "  down "   # WiFi: u+f1eb
+        # nf-fa-wifi: f1eb
+        format_up = " %quality %essid"
+        format_down = " down"
 }
 
 ethernet _first_ {
         # if you use %speed, i3status requires root privileges
-        format_up = "  %ip (%speed) "
-        format_down = "  down "   # Ethernet: u+f796
+        # nf-fa-ethernet: ef44
+        format_up = " %ip (%speed)"
+        format_down = " down"
 }
 
 battery all {
@@ -84,10 +85,14 @@ battery all {
         low_threshold = 30
         threshold_type = time
         hide_seconds = true
-        status_chr = " C"
-        status_bat = "  B"    # Battery 3/4 full: u+f241
-        status_unk = "  U"    # Plug: u+f1e6
-        status_full = "  F"   # Battery full: u+f240
+        # nf-md-battery_charging: f0084
+        status_chr = "󰂄 C"
+        # nf-md-battery_medium: f12a2
+        status_bat = "󱊢 B"
+	# nf-cod-plug: eb2d
+        status_unk = " U"
+        # nf-md-battery_high: f12a3
+        status_full = "󱊣 F"
 }
 
 #battery all {
@@ -103,47 +108,51 @@ run_watch VPN {
 }
 
 tztime local {
-        # Calendar: u+f073, Clock outlined: u+f017
-        format = "  %a, %d %b %Y  %H:%M:%S %Z"
+        format = " %a, %d %b %Y  %H:%M:%S %Z"
 }
 
 tztime dublin {
-        format = "  %time "
+        format = " %time"
         format_time = "%H:%M:%S %Z"
         timezone = "Europe/Dublin"
         hide_if_equals_localtime = false
 }
 
 tztime date {
-        # Calendar: u+f073, Clock outlined: u+f017
-        format = "  %a, %d %b %Y"
+        # nf-cod-calendar: eab0
+        format = " %a, %d %b %Y"
 }
 
 tztime time {
-        # Calendar: u+f073, Clock outlined: u+f017
-        format = "  %H:%M:%S %Z"
+	# nf-fa-clock: f017
+        format = " %H:%M:%S %Z"
 }
 
 load {
-        format = "   %1min "   # Truck-ramp-box: u+f4de
+        # nf-fa-truck_monster: eeb8
+        format = "  %1min" 
 }
 
 cpu_usage {
-        format = "  %usage "   # Tachometer: u+f0e4
+        # nf-oct-cpu: f4bc
+        format = "  %usage" 
 }
 
 cpu_temperature 0 {
-        format = "  %degrees°C "   # Temperature-half: u+f2c9
+        # nf-fa_temperature_half: f2c9; nf-md_temperature_celsius: f0504
+        format = " %degrees󰔄" 
 }
 
 disk "/" {
-        format = "  %free "   # HDD: u+f0a0
+        format = " %free"   # nf-fa-hard_drive: f0a0
         prefix_type = "binary"
 }
 
 volume master {
-        format = "  %volume "         # Volume-up: u+f028
-        format_muted = "  %volume "   # Volume-off: u+f026
+        # Volume-up: f028
+        format = "  %volume"
+        # Volume-off: f026
+        format_muted = " %volume" 
         # To obtain the name of the PulseAudio sink, use the following command:
         # $ pacmd list-sinks | grep name:
         #   name: <alsa_output.pci-0000_00_1f.3.analog-stereo>
