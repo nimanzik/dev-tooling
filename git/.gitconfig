@@ -1,4 +1,18 @@
-[help]
-	autocorrect = prompt
 [init]
 	defaultBranch = main
+[help]
+	autocorrect = prompt
+[alias]
+    subupdate = submodule update --remote --recursive
+[core]
+	fileMode = false
+# Store large files as lightweight pointers and restore them on checkout.
+[filter "lfs"]
+	# Replace file contents with an LFS pointer before storing them in Git.
+	clean = git-lfs clean -- %f
+	# Replace an LFS pointer with the actual file during checkout.
+	smudge = git-lfs smudge -- %f
+	# Use the persistent Git LFS process for both operations when supported.
+	process = git-lfs filter-process
+	# Fail when Git LFS is unavailable instead of using unfiltered content.
+	required = true
