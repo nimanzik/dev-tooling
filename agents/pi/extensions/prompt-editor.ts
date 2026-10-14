@@ -1,5 +1,6 @@
-import type { ExtensionAPI, ExtensionContext, ModelSelectEvent, ThinkingLevel } from "@mariozechner/pi-coding-agent";
-import { CustomEditor, ModelSelectorComponent, SettingsManager } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { CustomEditor } from "@earendil-works/pi-coding-agent";
+import { fuzzyFilter, Input, SelectList, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs/promises";
@@ -10,6 +11,7 @@ import type { Dirent } from "node:fs";
 // =============================================================================
 
 type ModeName = string;
+type ThinkingLevel = "off" | "minimal" | "low" | "medium" | "high" | "xhigh";
 
 type ModeSpec = {
 	provider?: string;
@@ -231,7 +233,7 @@ function applyModesPatch(target: ModesFile, patch: ModesPatch): void {
 			continue;
 		}
 
-		const targetSpec: Record<string, unknown> = ((target.modes[mode] ??= {}) as any) ?? {};
+		const targetSpec: Record<string, unknown> = (target.modes[mode] ??= {}) as Record<string, unknown>;
 		for (const [k, v] of Object.entries(specPatch)) {
 			if (v === null || v === undefined) {
 				delete targetSpec[k];
@@ -334,8 +336,7 @@ function orderedModeNames(modes: Record<string, ModeSpec>): string[] {
 	return Object.keys(modes).filter((name) => name !== CUSTOM_MODE_NAME);
 }
 
-function getModeBorderColor(ctx: ExtensionContext, pi: ExtensionAPI, mode: string): (text: string) => string {
-	const theme = ctx.ui.theme;
+function getModeBorderColor(theme: any, pi: ExtensionAPI, mode: string): (text: string) => string {
 	const spec = runtime.data.modes[mode];
 
 	// Explicit color override in JSON.
@@ -350,7 +351,11 @@ function getModeBorderColor(ctx: ExtensionContext, pi: ExtensionAPI, mode: strin
 	}
 
 	// Default: derive from the current thinking level.
-	return theme.getThinkingBorderColor(pi.getThinkingLevel());
+	try {
+		return theme.getThinkingBorderColor(pi.getThinkingLevel());
+	} catch {
+		return theme.getThinkingBorderColor("off");
+	}
 }
 
 function formatModeLabel(mode: string): string {
@@ -487,13 +492,17 @@ async function ensureRuntime(pi: ExtensionAPI, ctx: ExtensionContext): Promise<v
 	}
 }
 
-async function persistRuntime(pi: ExtensionAPI, ctx: ExtensionContext): Promise<void> {
+async function persistRuntime(
+	pi: ExtensionAPI,
+	ctx: ExtensionContext,
+	includeCurrentMode = false,
+): Promise<void> {
 	if (!runtime.filePath) return;
 
-	// Do not persist currentMode; multiple running pi sessions would fight over it.
-	// Instead we infer the mode on startup from the active model + thinking level.
+	// Configuration edits normally leave currentMode alone. Explicit mode selections
+	// include it so a fresh session can start in the last selected mode.
 	runtime.baseline ??= cloneModesFile(runtime.data);
-	const patch = computeModesPatch(runtime.baseline, runtime.data, false);
+	const patch = computeModesPatch(runtime.baseline, runtime.data, includeCurrentMode);
 	if (!patch) return;
 
 	await withFileLock(runtime.filePath, async () => {
@@ -599,6 +608,11 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 	if (!modelAppliedOk) {
 		runtime.currentMode = CUSTOM_MODE_NAME;
 		customOverlay = getCurrentSelectionSpec(pi, ctx);
+	} else {
+		// Persist only real, successfully applied modes. The shared modes file carries
+		// this selection across brand-new sessions without coupling it to session entries.
+		runtime.data.currentMode = mode;
+		await persistRuntime(pi, ctx, true);
 	}
 
 	if (ctx.hasUI) {
@@ -847,7 +861,9 @@ async function renameModeUI(pi: ExtensionAPI, ctx: ExtensionContext, oldName: st
 		}
 
 		runtime.data.modes = renameModesRecord(runtime.data.modes, oldName, newName);
-		await persistRuntime(pi, ctx);
+		const renamedPersistedMode = runtime.data.currentMode === oldName;
+		if (renamedPersistedMode) runtime.data.currentMode = newName;
+		await persistRuntime(pi, ctx, renamedPersistedMode);
 
 		if (runtime.currentMode === oldName) runtime.currentMode = newName;
 		if (runtime.lastRealMode === oldName) runtime.lastRealMode = newName;
@@ -864,23 +880,71 @@ async function pickModelForModeUI(
 ): Promise<{ provider: string; modelId: string } | undefined> {
 	if (!ctx.hasUI) return undefined;
 
-	const settingsManager = SettingsManager.inMemory();
-	const currentModel = spec.provider && spec.modelId ? ctx.modelRegistry.find(spec.provider, spec.modelId) : ctx.model;
+	const models = ctx.modelRegistry.getAvailable();
+	if (models.length === 0) {
+		ctx.ui.notify("No models available. Use /login to add a provider.", "warning");
+		return undefined;
+	}
 
-	const scopedModels: Array<{ model: any; thinkingLevel: string }> = [];
-
-	return ctx.ui.custom<{ provider: string; modelId: string } | undefined>((tui, _theme, _keybindings, done) => {
-		const selector = new ModelSelectorComponent(
-			tui,
-			currentModel,
-			settingsManager,
-			ctx.modelRegistry as any,
-			scopedModels as any,
-			(model) => done({ provider: model.provider, modelId: model.id }),
-			() => done(undefined),
-		);
-		return selector;
-	});
+	const currentModel = spec.provider && spec.modelId ? { provider: spec.provider, id: spec.modelId } : ctx.model;
+	const currentLabel = currentModel ? `${currentModel.provider}/${currentModel.id}` : undefined;
+	const labels = models.map((model) => `${model.provider}/${model.id}`);
+	const options = currentLabel && labels.includes(currentLabel)
+		? [currentLabel, ...labels.filter((label) => label !== currentLabel)]
+		: labels;
+	const choice = ctx.mode === "rpc"
+		? await ctx.ui.select("Model", options)
+		: await ctx.ui.custom<string | undefined>((tui, theme, keybindings, done) => {
+			const input = new Input();
+			const items = options.map((label) => ({ value: label, label }));
+			let visibleRows = 0;
+			const createList = (selectedValue?: string) => {
+				visibleRows = Math.max(1, Math.min(10, tui.terminal.rows - 4));
+				const filtered = fuzzyFilter(items, input.getValue(), (item) => item.value);
+				const list = new SelectList(filtered, visibleRows, {
+					selectedPrefix: (text) => theme.fg("accent", text),
+					selectedText: (text) => theme.fg("accent", text),
+					description: (text) => theme.fg("muted", text),
+					scrollInfo: (text) => theme.fg("dim", text),
+					noMatch: (text) => theme.fg("warning", text),
+				});
+				list.setSelectedIndex(Math.max(0, filtered.findIndex((item) => item.value === selectedValue)));
+				list.onSelect = (item) => done(item.value);
+				list.onCancel = () => done(undefined);
+				return list;
+			};
+			let list = createList();
+			return {
+				get focused() { return input.focused; },
+				set focused(value: boolean) { input.focused = value; },
+				render(width: number) {
+					if (visibleRows !== Math.max(1, Math.min(10, tui.terminal.rows - 4))) {
+						list = createList(list.getSelectedItem()?.value);
+					}
+					return [
+						truncateToWidth(theme.fg("accent", "Model · type to search"), width),
+						...input.render(width),
+						...list.render(width),
+						truncateToWidth(theme.fg("dim", "↑↓ navigate · enter select · esc cancel"), width),
+					];
+				},
+				invalidate() { input.invalidate(); list.invalidate(); },
+				handleInput(data: string) {
+					if ((["tui.select.up", "tui.select.down", "tui.select.confirm", "tui.select.cancel"] as const).some(
+						(action) => keybindings.matches(data, action),
+					)) {
+						list.handleInput(data);
+					} else {
+						const previous = input.getValue();
+						input.handleInput(data);
+						if (input.getValue() !== previous) list = createList();
+					}
+					tui.requestRender();
+				},
+			};
+		});
+	const selected = models.find((model) => `${model.provider}/${model.id}` === choice);
+	return selected ? { provider: selected.provider, modelId: selected.id } : undefined;
 }
 
 async function pickThinkingLevelForModeUI(
@@ -941,7 +1005,7 @@ class PromptEditor extends CustomEditor {
 		theme: ConstructorParameters<typeof CustomEditor>[1],
 		keybindings: ConstructorParameters<typeof CustomEditor>[2],
 	) {
-		super(tui, theme, keybindings);
+		super(tui, theme, keybindings, { embedWorkingStatus: true });
 		delete (this as { borderColor?: (text: string) => string }).borderColor;
 		Object.defineProperty(this, "borderColor", {
 			get: () => this._borderColor ?? ((text: string) => text),
@@ -960,36 +1024,59 @@ class PromptEditor extends CustomEditor {
 
 	render(width: number): string[] {
 		const lines = super.render(width);
+		const topBorder = lines[0] ?? "";
 		const mode = this.modeLabelProvider?.();
 		if (!mode) return lines;
 
 		const stripAnsi = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, "");
-		const topPlain = stripAnsi(lines[0] ?? "");
+		const topPlain = stripAnsi(topBorder);
+		const isBashMode = this.getText().trimStart().startsWith("!");
 
-		// If the editor is scrolled, the built-in editor renders a scroll indicator on the top border.
-		// Preserve it, but still show the mode label.
-		const scrollPrefixMatch = topPlain.match(/^(─── ↑ \d+ more )/);
-		const prefix = scrollPrefixMatch?.[1] ?? "──";
-
-		let label = formatModeLabel(mode);
-
-		// Compute how much room we have for the label core (without truncating the prefix).
-		const labelLeftSpace = prefix.endsWith(" ") ? "" : " ";
-		const labelRightSpace = " ";
-		const minRightBorder = 1; // keep at least one border cell on the right
-		const maxLabelLen = Math.max(0, width - prefix.length - labelLeftSpace.length - labelRightSpace.length - minRightBorder);
-		if (maxLabelLen <= 0) return lines;
-		if (label.length > maxLabelLen) label = label.slice(0, maxLabelLen);
-
-		const labelChunk = `${labelLeftSpace}${label}${labelRightSpace}`;
-
-		const remaining = width - prefix.length - labelChunk.length;
-		if (remaining < 0) return lines;
-
-		const right = "─".repeat(Math.max(0, remaining));
+		// Preserve everything the built-in editor placed before the trailing border,
+		// including the embedded working spinner and any scroll indicator. An idle
+		// bash editor keeps the same two-cell border prefix before its label.
+		const trailingBorderStart = topPlain.search(/─+$/);
+		const semanticPrefix = trailingBorderStart > 0 ? topPlain.slice(0, trailingBorderStart) : "";
+		const prefixWidth = Math.min(width, semanticPrefix ? visibleWidth(semanticPrefix) : isBashMode ? 2 : 0);
+		let left = truncateToWidth(topBorder, prefixWidth, "");
+		let leftWidth = prefixWidth;
 
 		const labelColor = this.modeLabelColor ?? ((text: string) => this.borderColor(text));
-		lines[0] = this.borderColor(prefix) + labelColor(labelChunk) + this.borderColor(right);
+		if (isBashMode) {
+			const bashPrefix = semanticPrefix ? this.borderColor("── ") : labelColor(" ");
+			const bashLabel = labelColor("bash ");
+			left += bashPrefix + bashLabel;
+			leftWidth += visibleWidth(bashPrefix) + visibleWidth(bashLabel);
+		}
+
+		const modeLeftSpace = " ";
+		const modeRightSpace = " ";
+		const rightBorderWidth = 2;
+		const minGapWidth = 1;
+		const maxModeWidth = Math.max(
+			0,
+			width -
+				leftWidth -
+				visibleWidth(modeLeftSpace) -
+				visibleWidth(modeRightSpace) -
+				rightBorderWidth -
+				minGapWidth,
+		);
+		if (maxModeWidth <= 0) return lines;
+
+		const modeLabel = truncateToWidth(formatModeLabel(mode), maxModeWidth, "");
+		const modeWidth = visibleWidth(modeLabel);
+		const gapWidth =
+			width - leftWidth - visibleWidth(modeLeftSpace) - modeWidth - visibleWidth(modeRightSpace) - rightBorderWidth;
+		if (gapWidth < minGapWidth) return lines;
+
+		lines[0] =
+			left +
+			this.borderColor("─".repeat(gapWidth)) +
+			labelColor(modeLeftSpace) +
+			labelColor(modeLabel) +
+			labelColor(modeRightSpace) +
+			this.borderColor("─".repeat(rightBorderWidth));
 		return lines;
 	}
 
@@ -1143,18 +1230,19 @@ function historiesMatch(a: PromptEntry[], b: PromptEntry[]): boolean {
 }
 
 function setEditor(pi: ExtensionAPI, ctx: ExtensionContext, history: PromptEntry[]) {
+	const uiTheme = ctx.ui.theme;
 	ctx.ui.setEditorComponent((tui, theme, keybindings) => {
 		const editor = new PromptEditor(tui, theme, keybindings);
 		requestEditorRender = () => editor.requestRenderNow();
 		editor.modeLabelProvider = () => runtime.currentMode;
 		// Keep the mode label color stable (match footer/status bar).
-		editor.modeLabelColor = (text: string) => ctx.ui.theme.fg("dim", text);
+		editor.modeLabelColor = (text: string) => uiTheme.fg("dim", text);
 		const borderColor = (text: string) => {
 			const isBashMode = editor.getText().trimStart().startsWith("!");
 			if (isBashMode) {
-				return ctx.ui.theme.getBashModeBorderColor()(text);
+				return uiTheme.getBashModeBorderColor()(text);
 			}
-			return getModeBorderColor(ctx, pi, runtime.currentMode)(text);
+			return getModeBorderColor(uiTheme, pi, runtime.currentMode)(text);
 		};
 
 		editor.borderColor = borderColor;
@@ -1235,7 +1323,7 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
-	pi.registerShortcut("ctrl+shift+m", {
+	pi.registerShortcut("alt+m", {
 		description: "Select prompt mode",
 		handler: async (ctx) => {
 			await selectModeUI(pi, ctx);
@@ -1254,38 +1342,30 @@ export default function (pi: ExtensionAPI) {
 		await ensureRuntime(pi, ctx);
 		customOverlay = null;
 
-		const inferred = inferModeFromSelection(ctx, pi, runtime.data);
-		if (inferred) {
-			runtime.currentMode = inferred;
-			runtime.lastRealMode = inferred;
+		const branch = ctx.sessionManager.getBranch();
+		const isFreshSession = branch.every(
+			(entry) => entry.type === "model_change" || entry.type === "thinking_level_change",
+		);
+		if (isFreshSession) {
+			// Pi records the default model/thinking level before session_start, even for a
+			// fresh session. Ignore those initialization entries and apply the default mode.
+			await applyMode(pi, ctx, "default");
 		} else {
-			// No exact match → treat as overlay.
-			runtime.currentMode = CUSTOM_MODE_NAME;
-			customOverlay = getCurrentSelectionSpec(pi, ctx);
+			const inferred = inferModeFromSelection(ctx, pi, runtime.data);
+			if (inferred) {
+				runtime.currentMode = inferred;
+				runtime.lastRealMode = inferred;
+			} else {
+				// No exact match → treat as overlay.
+				runtime.currentMode = CUSTOM_MODE_NAME;
+				customOverlay = getCurrentSelectionSpec(pi, ctx);
+			}
 		}
 
 		applyEditor(pi, ctx);
 	});
 
-	pi.on("session_switch", async (_event, ctx) => {
-		lastObservedModel = { provider: ctx.model?.provider, modelId: ctx.model?.id };
-		await ensureRuntime(pi, ctx);
-		customOverlay = null;
-
-		const inferred = inferModeFromSelection(ctx, pi, runtime.data);
-		if (inferred) {
-			runtime.currentMode = inferred;
-			runtime.lastRealMode = inferred;
-		} else {
-			runtime.currentMode = CUSTOM_MODE_NAME;
-			customOverlay = getCurrentSelectionSpec(pi, ctx);
-		}
-
-		applyEditor(pi, ctx);
-	});
-
-
-	pi.on("model_select", async (event: ModelSelectEvent, ctx) => {
+	pi.on("model_select", async (event, ctx) => {
 		// Always track the last observed model for overlay/store correctness.
 		lastObservedModel = { provider: event.model.provider, modelId: event.model.id };
 
