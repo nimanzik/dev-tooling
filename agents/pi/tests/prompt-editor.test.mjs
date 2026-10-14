@@ -1,16 +1,23 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire, stripTypeScriptTypes } from "node:module";
+import * as nodeModule from "node:module";
 import vm from "node:vm";
-import test from "node:test";
+import nodeTest from "node:test";
 
-// Exercise the picker without loading the editor or requiring Pi's terminal runtime.
-const source = readFileSync(new URL("../extensions/prompt-editor.ts", import.meta.url), "utf8");
-const pickerSource = source.slice(
-	source.indexOf("async function pickModelForModeUI("),
-	source.indexOf("async function pickThinkingLevelForModeUI("),
-);
-const { Input, SelectList, fuzzyFilter, getKeybindings, truncateToWidth } = createRequire(import.meta.url)("@earendil-works/pi-tui");
+const stripTypeScriptTypes = nodeModule.stripTypeScriptTypes ?? ((code) => code);
+
+let piTui;
+try {
+	piTui = nodeModule.createRequire(import.meta.url)("@earendil-works/pi-tui");
+} catch {
+	piTui = undefined;
+}
+
+const test = piTui
+	? nodeTest
+	: (name, fn) => nodeTest(name, { skip: "@earendil-works/pi-tui not available; set NODE_PATH to a Pi install" }, fn);
+
+const { Input, SelectList, fuzzyFilter, getKeybindings, truncateToWidth } = piTui ?? {};
 const pickModel = vm.runInNewContext(stripTypeScriptTypes(pickerSource) + "\npickModelForModeUI", {
 	Input, SelectList, fuzzyFilter, truncateToWidth,
 });
