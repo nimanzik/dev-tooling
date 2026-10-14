@@ -1,26 +1,24 @@
-#
 # Prompt before any removal and overwrite
-#
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
-#
 # Some more ls aliases
-#
 alias ll='ls -lF'
 alias la='ls -lFA'
 alias l='ls -CF'
 alias l1='ls -1F'
 
-#
+# Some git aliases
+alias gs='git status --short'
+alias gsb='git status --short --branch'
+alias gd='git diff'
+alias gds='git diff --staged'
+
 # Gnome input-output aliases
-#
 alias rename='gio rename'
 
-#
 # Customised command to open files
-#
 custom_open () { gio open "$@" > /dev/null 2>&1 & }
 alias open='custom_open'
 alias go='custom_open'
@@ -28,9 +26,7 @@ alias go='custom_open'
 # mygedit () { gedit "$@" > /dev/null 2>&1 & }
 # alias gedit='mygedit'
 
-#
 # Current working directory
-#
 mycd () {
     \cd "$@"
     echo $PWD > ~/.cwd
@@ -44,22 +40,15 @@ if [ -f ~/.cwd ]; then
     fi
 fi
 
-#
 # Use GNOME settings in i3
-#
 alias gnome-control-center='env XDG_CURRENT_DESKTOP=GNOME gnome-control-center'
 
-#
 # Conda/Mamba virtual envs activation and deactivation
-#
 myactivate () { mamba activate "$1" ; }
 alias act="myactivate"
 alias dact="mamba deactivate"
 
-#
 # Rename i3 workspaces
-#
-
 #myrename () { i3-msg "rename workspace to $1 " ; }
 myrename () {
     if (($# == 0))
