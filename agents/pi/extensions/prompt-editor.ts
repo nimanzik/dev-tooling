@@ -1350,8 +1350,8 @@ export default function (pi: ExtensionAPI) {
 		);
 		if (isFreshSession) {
 			// Pi records the default model/thinking level before session_start, even for a
-			// fresh session. Ignore those initialization entries and apply the last mode.
-			await applyMode(pi, ctx, runtime.data.currentMode);
+			// fresh session. Ignore those initialization entries and apply the default mode.
+			await applyMode(pi, ctx, "default");
 		} else {
 			const inferred = inferModeFromSelection(ctx, pi, runtime.data);
 			if (inferred) {
