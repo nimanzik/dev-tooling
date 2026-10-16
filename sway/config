@@ -22,7 +22,9 @@ set $menu wmenu-run
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+#output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+# Custom wallpaper
+output * bg ${HOME}/.wallpapers/fuji/image fill
 #
 # Example configuration:
 #
@@ -260,7 +262,7 @@ titlebar_padding 4 2
 client.focused #729fcf #3465a4 #eeeeec
 
 # Add a screen lock key binding
-bindsym $mod+Ctrl+l exec swaylock
+bindsym $mod+Ctrl+l exec swaylock -i ${HOME}/.wallpapers/clouds/image
 
 # Kill focused window with $mod + middle click (button2)
 bindsym $mod+button2 kill
