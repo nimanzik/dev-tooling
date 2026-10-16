@@ -253,7 +253,7 @@ bar {
 
 # --- My Custom Settings ---
 # Set global window title bar font (format: font <family> <style> <size>)
-font pango:JetBrainsMono Nerd Font Regular 9
+font pango:RobotoMono Nerd Font 9
 
 # Set horizontal and vertical padding around the title text in pixels
 titlebar_padding 4 2
