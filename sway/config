@@ -267,4 +267,11 @@ bindsym $mod+Ctrl+l exec swaylock -i ${HOME}/.wallpapers/clouds/image
 # Kill focused window with $mod + middle click (button2)
 bindsym $mod+button2 kill
 
+# Show NetworkManager Applet on Waybar system tray.
+# Must install 'network-manager-applet' first.
+exec --no-startup-id 'nm-applet --indicator'
+
+# Wayland desktop notification daemon. Must install 'mako' first.
+exec mako
+
 include /etc/sway/config.d/*
