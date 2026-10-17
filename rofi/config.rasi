@@ -1,0 +1,7 @@
+configuration {
+    modi: "drun,run,ssh";
+    show-icons: true;
+    dpi: 96;
+    font: "Droid Sans Mono 10";
+}
+@theme "rounded-nord-dark"
