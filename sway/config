@@ -53,6 +53,12 @@ exec swaymsg focus output eDP-1
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
 
+exec swayidle -w \
+    timeout 300 'swaylock -f -c 000000' \
+    timeout 330 'swaymsg "output * power off"' \
+        resume 'swaymsg "output * power on"' \
+    before-sleep 'swaylock -f -c 000000'
+
 ### Input configuration
 #
 # Example configuration:
