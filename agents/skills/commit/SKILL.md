@@ -24,8 +24,10 @@ Commits-style subject.
   See the following section for a list of commit types.
 - `scope` is OPTIONAL. Short noun in parentheses for the affected area (e.g.,
   `api`, `parser`, `ui`).
-- `description` is REQUIRED. Short, present tense, imperative.
-- Header must be maximum 50 characters, no trailing period.
+- `description` is REQUIRED. Use a concise, imperative summary, starting with
+  a lowercase verb to match the examples below.
+- Aim for about 50 characters for the entire header, including type and scope.
+  This is a target, not a hard maximum. Omit the trailing period.
 
 ## Commit Types
 
@@ -45,8 +47,11 @@ Commits-style subject.
 
 ## Notes
 
-- Body is OPTIONAL. If needed, add a blank line after the subject and write
-  short paragraphs.
+- Body is OPTIONAL. Put technical details and explanations that do not fit
+  the concise subject in the body, separated from the subject by a blank line.
+- Wrap body text at about 72 columns and separate paragraphs with blank lines.
+- Bullets are allowed. Use a hyphen or asterisk followed by a space, separate
+  items with blank lines, and indent continuation lines to align with the text.
 - Do NOT include breaking-change markers or footers.
 - Do NOT add sign-offs (no `Signed-off-by`).
 - Before committing, explicitly state intended files and commit message and
