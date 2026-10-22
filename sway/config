@@ -275,6 +275,12 @@ bindsym $mod+Ctrl+l exec swaylock -f
 # Kill focused window with $mod + middle click (button2)
 bindsym $mod+button2 kill
 
+# Move focused container / focus to the left/right output ($mod+x toggles
+# with two outputs). --to-code keeps the keys the same on every layout.
+bindsym --to-code $mod+Shift+y move container to output left
+bindsym --to-code $mod+Shift+x move container to output right
+bindsym $mod+x focus output right
+
 # Show NetworkManager Applet on Waybar system tray.
 # Must install 'network-manager-applet' first.
 exec --no-startup-id 'nm-applet --indicator'
