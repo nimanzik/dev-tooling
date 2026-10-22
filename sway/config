@@ -18,8 +18,6 @@ set $right l
 set $term konsole
 # Your preferred application launcher
 set $menu wmenu-run
-# Lock screen wallpaper
-set $wallpaper ${HOME}/.wallpapers/darkest-hour/image
 
 # === Output configuration ===
 #
@@ -57,10 +55,10 @@ exec swaymsg focus output eDP-1
 # resumed. It will also lock your screen before your computer goes to sleep.
 
 exec swayidle -w \
-    timeout 300 'swaylock -f -i $wallpaper' \
-    timeout 330 'swaymsg "output * power off"' \
+    timeout 300 'swaylock -f' \
+    timeout 360 'swaymsg "output * power off"' \
         resume 'swaymsg "output * power on"' \
-    before-sleep 'swaylock -f -i $wallpaper'
+    before-sleep 'swaylock -f'
 
 # === Input configuration ===
 #
@@ -269,8 +267,10 @@ titlebar_padding 4 2
 # Set window titlebar and border colors (format: client.<class> <border> <background> <text>)
 client.focused #729fcf #3465a4 #eeeeec
 
-# Add a screen lock key binding
-bindsym $mod+Ctrl+l exec swaylock -i $wallpaper
+# Add a screen lock key binding. The path to screen-lock wallpaper image can
+# be configured globally in ~/.config/swaylock/config, so that every invocation
+# of swaylock, including the one from swayidle, will use that wallpaper.
+bindsym $mod+Ctrl+l exec swaylock -f
 
 # Kill focused window with $mod + middle click (button2)
 bindsym $mod+button2 kill
