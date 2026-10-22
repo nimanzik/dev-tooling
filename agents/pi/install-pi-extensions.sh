@@ -14,3 +14,4 @@ pi install https://github.com/dbachelder/pi-btw
 pi install npm:@ff-labs/pi-fff
 pi install npm:pi-simplify
 pi install npm:pi-web-access
+pi install npm:@plannotator/pi-extension
