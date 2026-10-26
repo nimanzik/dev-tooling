@@ -11,7 +11,10 @@ pi install https://github.com/earendil-works/pi-review-loop
 pi install https://github.com/earendil-works/pi-review
 pi install https://github.com/dodo-reach/pi-clarify
 pi install https://github.com/dbachelder/pi-btw
+pi install https://github.com/nicobailon/visual-explainer
 pi install npm:@ff-labs/pi-fff
+pi install npm:@plannotator/pi-extension
 pi install npm:pi-simplify
 pi install npm:pi-web-access
-pi install npm:@plannotator/pi-extension
+pi install npm:pi-intercom
+pi install npm:pi-cached-compaction
