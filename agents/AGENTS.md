@@ -2,66 +2,63 @@
 
 ## Commands
 
-- **Linting**: `uvx ruff check --fix src/`
-- **Formatting**: `uvx ruff format src/`
-- **Type checking**: `uvx ty check src/` (Do NOT use mypy)
+- Run every Python command through `uv`.
+- **Linting**: `uvx ruff check --fix .`
+- **Formatting**: `uvx ruff format .`
+- **Type checking**: `uvx ty check src/`
 - **Testing all**: `uv run pytest tests -v --tb=short`
 - **Testing single**:
   `uv run pytest tests/path/to/test_file.py::test_function_name -v --tb=short`
 - **Cleaning up**: `just clean` (removes cache directories)
 
+## Dependencies
+
+- Ask the user before adding any dependency; the user adds it to the project.
+
 ## Code style
 
-- **Python**:
-  - Line length 88.
-  - Use double quotes everywhere.
 - **Imports**:
   - Use `from __future__ import annotations` if needed.
   - Use `TYPE_CHECKING` block for type-only imports.
 - **Types**:
-  - Strict typing required (`disallow_untyped_defs=true`).
+  - Every function has complete, accurate type hints.
   - Use `NDArray`, `Self`, type unions with `|`.
-  - Do NOT use deprecated aliases like `typing.List`, `typing.Dict` etc.
-  - Use an abstract collection type from `collections.abc` where possible.
-  - All type hints must be complete and accurate.
+  - Use built-in generics (`list`, `dict`) and abstract collection types from
+    `collections.abc` where possible.
 - **Docstrings**:
   - Use NumPy style convention, max doc length 79 chars.
   - Use "or" instead of `|` in parameter type descriptions.
-  - When writing docstrings, prioritise clarity over brevity.
-  - Do NOT abbreviate words unless it would result in ridiculously long names.
+  - Prioritise clarity over brevity.
   - Use British English spelling (e.g., "modelling", "optimise", "colour").
+- **Naming**:
+  - Write words in full; abbreviate only when the full name would be
+    ridiculously long.
 - **Logs and error messages**:
   - Use typed exception classes.
   - Begin messages with capital letter, no ending period.
   - Progress actions should end with `...`, e.g. "Loading data...".
   - In-text names should be quoted.
-- **Naming**:
-  - `snake_case` for functions/variables, `PascalCase` for classes, and
-    `UPPER_CASE` for constants.
-- **Data-Validation Models**:
-  - Pydantic v2 BaseModel or SQLModel for data validation.
-- **DataFrame operations**:
-  - Always use `polars`. Do NOT use `pandas`.
-- **Pre-commit**:
-  - Runs ruff check + format.
-  - No commits to main branch allowed.
+- **Data validation models**: Pydantic v2 `BaseModel` or `SQLModel`.
+- **DataFrame operations**: always use `polars`.
 
 ## Code testing standards
 
-- Write all Python tests using `pytest`. Do NOT use `unittest`.
+- Write all Python tests using `pytest`.
 - Tests should be placed in a `tests/` directory at the root of the project.
 - If a module contains submodules, create a corresponding subdirectory as
   `tests/test_<module-name>/` and place tests for submodules there.
-- Use descriptive function names starting with `test_`.
 - Prefer fixtures over setup/teardown methods.
-- Use assert statements directly, not `self.assertEqual`.
 
-## Git commits
+## Git
 
-- ALWAYS use Conventional Commit messages (feat, fix, docs, test etc.).
-- When committing multiple unrelated changes, commit them separately in
-  logical groups.
-- Show the plan before committing.
+- Read-only git operations (`git status`, `git diff`, `git log`, `git show`)
+  need no approval.
+- **Commits**:
+  - Use Conventional Commit messages (feat, fix, docs, test etc.).
+  - Commit unrelated changes separately, in logical groups.
+  - Show the commit plan (files and messages per commit) and wait for
+    approval before running `git add` or `git commit`.
+  - Commit to a feature branch; `main` is protected.
 
 ## High-impact actions (explicit approval required)
 
@@ -75,7 +72,7 @@
 
 High-impact commands include:
 
-- `git push` (any remot branch)
+- `git push` (any remote branch)
 - `gh pr create`, `gh pr edit`, `gh pr merge`, `gh pr close`
 - `git config` (local or global)
 - Destructive git operations (`--force`, `reset --hard`, branch/tag deletion,
@@ -89,14 +86,3 @@ network or git state-changing action.
 - ALWAYS run `markdownlint` on markdown files that are created or edited.
 - If `markdownlint-cli` is not installed, ask user to install it.
 - Fix all linting issues before completing the task.
-
-## Notes
-
-- ALWAYS use `uv` for Python commands. NEVER use pip or poetry.
-- NEVER add any dependencies by yourself without asking. If a new dependency
-  library is needed, ask user first and they will add it to the project.
-- NEVER run git operations that change the git state, e.g. `git add`,
-  `git commit`, `git push`. You may do ONLY read-only git operations without
-  asking, e.g. `git status`, `git diff`, `git show`.
-- Always prioritise code quality, readability, and maintainability.
-- When in doubt, ask user for clarification.
