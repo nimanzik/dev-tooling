@@ -1,0 +1,562 @@
+[
+  {
+    "name": "ask-matt",
+    "path": "/home/nima/.agents/skills/ask-matt",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "bro",
+    "path": "/home/nima/.agents/skills/bro",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "cursor/plugins",
+    "sourceUrl": "https://github.com/cursor/plugins.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "code-review",
+    "path": "/home/nima/.agents/skills/code-review",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "codebase-design",
+    "path": "/home/nima/.agents/skills/codebase-design",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "commit",
+    "path": "/home/nima/.agents/skills/commit",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "nimanzik/dev-tooling",
+    "sourceUrl": "https://github.com/nimanzik/dev-tooling.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "context7",
+    "path": "/home/nima/.agents/skills/context7",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "intellectronica/agent-skills",
+    "sourceUrl": "https://github.com/intellectronica/agent-skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "diagnosing-bugs",
+    "path": "/home/nima/.agents/skills/diagnosing-bugs",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "domain-modeling",
+    "path": "/home/nima/.agents/skills/domain-modeling",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "find-skills",
+    "path": "/home/nima/.agents/skills/find-skills",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "vercel-labs/skills",
+    "sourceUrl": "https://github.com/vercel-labs/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "github",
+    "path": "/home/nima/.agents/skills/github",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "nimanzik/dev-tooling",
+    "sourceUrl": "https://github.com/nimanzik/dev-tooling.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "grill-me",
+    "path": "/home/nima/.agents/skills/grill-me",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "grill-with-docs",
+    "path": "/home/nima/.agents/skills/grill-with-docs",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "grilling",
+    "path": "/home/nima/.agents/skills/grilling",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "handoff",
+    "path": "/home/nima/.agents/skills/handoff",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "herdr",
+    "path": "/home/nima/.agents/skills/herdr",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "herdrdev/herdr",
+    "sourceUrl": "https://github.com/herdrdev/herdr.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "implement",
+    "path": "/home/nima/.agents/skills/implement",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "implement-spec",
+    "path": "/home/nima/.agents/skills/implement-spec",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "improve-codebase-architecture",
+    "path": "/home/nima/.agents/skills/improve-codebase-architecture",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "in-your-own-words",
+    "path": "/home/nima/.agents/skills/in-your-own-words",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "cursor/plugins",
+    "sourceUrl": "https://github.com/cursor/plugins.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "plain-writing",
+    "path": "/home/nima/.agents/skills/plain-writing",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "docwriter-org/plain-writing-skill",
+    "sourceUrl": "https://github.com/docwriter-org/plain-writing-skill.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "polars",
+    "path": "/home/nima/.agents/skills/polars",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "polars-inc/skills",
+    "sourceUrl": "https://github.com/polars-inc/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "pr",
+    "path": "/home/nima/.agents/skills/pr",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "prototype",
+    "path": "/home/nima/.agents/skills/prototype",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "research",
+    "path": "/home/nima/.agents/skills/research",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "retro",
+    "path": "/home/nima/.agents/skills/retro",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "setup-matt-pocock-skills",
+    "path": "/home/nima/.agents/skills/setup-matt-pocock-skills",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "show-me",
+    "path": "/home/nima/.agents/skills/show-me",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "humanlayer/skills",
+    "sourceUrl": "https://github.com/humanlayer/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "tdd",
+    "path": "/home/nima/.agents/skills/tdd",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "teach",
+    "path": "/home/nima/.agents/skills/teach",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "technical-writing",
+    "path": "/home/nima/.agents/skills/technical-writing",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "cursor/plugins",
+    "sourceUrl": "https://github.com/cursor/plugins.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "to-questionnaire",
+    "path": "/home/nima/.agents/skills/to-questionnaire",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "to-spec",
+    "path": "/home/nima/.agents/skills/to-spec",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "to-tickets",
+    "path": "/home/nima/.agents/skills/to-tickets",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "triage",
+    "path": "/home/nima/.agents/skills/triage",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "unslop",
+    "path": "/home/nima/.agents/skills/unslop",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "cursor/plugins",
+    "sourceUrl": "https://github.com/cursor/plugins.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "visual-pr",
+    "path": "/home/nima/.agents/skills/visual-pr",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "humanlayer/skills",
+    "sourceUrl": "https://github.com/humanlayer/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "wait-what",
+    "path": "/home/nima/.agents/skills/wait-what",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "wayfinder",
+    "path": "/home/nima/.agents/skills/wayfinder",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "wizard",
+    "path": "/home/nima/.agents/skills/wizard",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  },
+  {
+    "name": "writing-for-agents",
+    "path": "/home/nima/.agents/skills/writing-for-agents",
+    "scope": "global",
+    "agents": [
+      "Codex",
+      "GitHub Copilot",
+      "Pi",
+      "Zed"
+    ],
+    "source": "mattpocock/skills",
+    "sourceUrl": "https://github.com/mattpocock/skills.git",
+    "sourceType": "github"
+  }
+]
