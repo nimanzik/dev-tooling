@@ -58,7 +58,7 @@
   - Commit unrelated changes separately, in logical groups.
   - Show the commit plan (files and messages per commit) and wait for
     approval before running `git add` or `git commit`.
-  - Commit to a feature branch; `main` is protected.
+  - In Python projects, commit to a feature branch rather than `main`.
 
 ## High-impact actions (explicit approval required)
 
