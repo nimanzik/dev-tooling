@@ -1323,14 +1323,14 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
-	pi.registerShortcut("alt+m", {
+	pi.registerShortcut("alt+o", {
 		description: "Select prompt mode",
 		handler: async (ctx) => {
 			await selectModeUI(pi, ctx);
 		},
 	});
 
-	pi.registerShortcut("ctrl+space", {
+	pi.registerShortcut("alt+n", {
 		description: "Cycle prompt mode",
 		handler: async (ctx) => {
 			await cycleMode(pi, ctx, 1);
