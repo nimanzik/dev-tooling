@@ -468,6 +468,7 @@ type ModeRuntime = {
 	currentMode: string;
 	// guard against feedback loops when we switch model ourselves
 	applying: boolean;
+	thinkingLevel?: ThinkingLevel;
 };
 
 const runtime: ModeRuntime = {
@@ -583,7 +584,6 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 	// "custom" is a runtime-only overlay mode.
 	if (mode === CUSTOM_MODE_NAME) {
 		runtime.currentMode = CUSTOM_MODE_NAME;
-		customOverlay = getCurrentSelectionSpec(pi, ctx);
 		if (ctx.hasUI) requestEditorRender?.();
 		return;
 	}
@@ -598,7 +598,6 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 
 	runtime.currentMode = mode;
 	runtime.lastRealMode = mode;
-	customOverlay = null;
 
 	runtime.applying = true;
 	let modelAppliedOk = true;
@@ -625,6 +624,8 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 			pi.setThinkingLevel(spec.thinkingLevel);
 		}
 	} finally {
+		// Thinking events can arrive after this guard clears; retain the effective (clamped) selection.
+		runtime.thinkingLevel = pi.getThinkingLevel();
 		runtime.applying = false;
 	}
 
@@ -633,7 +634,6 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 	// switching between models with different thinking capabilities.
 	if (!modelAppliedOk) {
 		runtime.currentMode = CUSTOM_MODE_NAME;
-		customOverlay = getCurrentSelectionSpec(pi, ctx);
 	} else {
 		// Record successful real-mode selections, not a startup preference.
 		runtime.data.currentMode = mode;
@@ -688,10 +688,9 @@ async function handleModeChoiceUI(pi: ExtensionAPI, ctx: ExtensionContext, choic
 			return;
 		}
 
-		// "store": overwrite target mode with the current overlay selection (keep target color if set)
+		// "store": capture the current selection (keep target color if set).
 		await ensureRuntime(pi, ctx);
-		const overlay = customOverlay ?? getCurrentSelectionSpec(pi, ctx);
-		await storeSelectionIntoMode(pi, ctx, choice, overlay);
+		await storeSelectionIntoMode(pi, ctx, choice, getCurrentSelectionSpec(pi, ctx));
 		await applyMode(pi, ctx, choice);
 		ctx.ui.notify(`Stored ${CUSTOM_MODE_NAME} into \"${choice}\"`, "info");
 		return;
@@ -756,7 +755,7 @@ async function addModeUI(pi: ExtensionAPI, ctx: ExtensionContext): Promise<strin
 		}
 
 		// Default new modes to the current selection so they behave as expected immediately.
-		const selection = customOverlay ?? getCurrentSelectionSpec(pi, ctx);
+		const selection = getCurrentSelectionSpec(pi, ctx);
 		runtime.data.modes[name] = {
 			provider: selection.provider,
 			modelId: selection.modelId,
@@ -841,7 +840,6 @@ async function editModeUI(pi: ExtensionAPI, ctx: ExtensionContext, mode: string)
 
 			if (runtime.currentMode === modeName) {
 				runtime.currentMode = CUSTOM_MODE_NAME;
-				customOverlay = getCurrentSelectionSpec(pi, ctx);
 			}
 			if (runtime.lastRealMode === modeName) {
 				runtime.lastRealMode = "default";
@@ -1134,11 +1132,6 @@ function collectUserPromptsFromEntries(entries: Array<any>): PromptEntry[] {
 	return prompts;
 }
 
-function getSessionDirForCwd(cwd: string): string {
-	const safePath = `--${cwd.replace(/^[/\\]/, "").replace(/[/\\:]/g, "-")}--`;
-	return path.join(getGlobalAgentDir(), "sessions", safePath);
-}
-
 async function readTail(filePath: string, maxBytes = 256 * 1024): Promise<string> {
 	let fileHandle: fs.FileHandle | undefined;
 	try {
@@ -1167,8 +1160,27 @@ async function readTail(filePath: string, maxBytes = 256 * 1024): Promise<string
 	}
 }
 
-async function loadPromptHistoryForCwd(cwd: string, excludeSessionFile?: string): Promise<PromptEntry[]> {
-	const sessionDir = getSessionDirForCwd(path.resolve(cwd));
+async function sessionMatchesCwd(filePath: string, cwd: string): Promise<boolean> {
+	let fileHandle: fs.FileHandle | undefined;
+	try {
+		fileHandle = await fs.open(filePath, "r");
+		// Session metadata is on the first line, which may be outside the bounded tail.
+		// shortcut: headers over 16 KiB are skipped, increase the bound if Pi adds larger metadata.
+		const buffer = Buffer.alloc(16 * 1024);
+		const { bytesRead } = await fileHandle.read(buffer, 0, buffer.length, 0);
+		const chunk = buffer.subarray(0, bytesRead).toString("utf8");
+		const newline = chunk.indexOf("\n");
+		if (newline < 0) return false;
+		const header = JSON.parse(chunk.slice(0, newline));
+		return header?.type === "session" && typeof header.cwd === "string" && path.resolve(header.cwd) === path.resolve(cwd);
+	} catch {
+		return false;
+	} finally {
+		await fileHandle?.close();
+	}
+}
+
+async function loadPromptHistoryForCwd(cwd: string, sessionDir: string, excludeSessionFile?: string): Promise<PromptEntry[]> {
 	const resolvedExclude = excludeSessionFile ? path.resolve(excludeSessionFile) : undefined;
 	const prompts: PromptEntry[] = [];
 
@@ -1199,11 +1211,12 @@ async function loadPromptHistoryForCwd(cwd: string, excludeSessionFile?: string)
 
 	for (const file of sortedFiles) {
 		if (resolvedExclude && path.resolve(file.filePath) === resolvedExclude) continue;
+		if (!(await sessionMatchesCwd(file.filePath, cwd))) continue;
 
 		const tail = await readTail(file.filePath);
 		if (!tail) continue;
 		const lines = tail.split("\n").filter(Boolean);
-		for (const line of lines) {
+		for (const line of lines.reverse()) {
 			let entry: any;
 			try {
 				entry = JSON.parse(line);
@@ -1240,9 +1253,6 @@ function buildHistoryList(currentSession: PromptEntry[], previousSessions: Promp
 
 	return deduped.slice(-MAX_HISTORY_ENTRIES);
 }
-
-// Overlay mode state ("custom"). Not selectable, not cycled into.
-let customOverlay: ModeSpec | null = null;
 
 let loadCounter = 0;
 
@@ -1292,7 +1302,7 @@ function applyEditor(pi: ExtensionAPI, ctx: ExtensionContext) {
 	setEditor(pi, ctx, immediateHistory);
 
 	void (async () => {
-		const previousPrompts = await loadPromptHistoryForCwd(ctx.cwd, sessionFile ?? undefined);
+		const previousPrompts = await loadPromptHistoryForCwd(ctx.cwd, ctx.sessionManager.getSessionDir(), sessionFile ?? undefined);
 		if (currentLoad !== loadCounter) return;
 		if (ctx.ui.getEditorText() !== initialText) return;
 		const history = buildHistoryList(currentPrompts, previousPrompts);
@@ -1337,7 +1347,7 @@ export default function (pi: ExtensionAPI) {
 					return;
 				}
 
-				const selection = customOverlay ?? getCurrentSelectionSpec(pi, ctx);
+				const selection = getCurrentSelectionSpec(pi, ctx);
 				await storeSelectionIntoMode(pi, ctx, target, selection);
 				if (ctx.hasUI) ctx.ui.notify(`Stored current selection into "${target}"`, "info");
 				return;
@@ -1364,8 +1374,8 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("session_start", async (event, ctx) => {
 		lastObservedModel = { provider: ctx.model?.provider, modelId: ctx.model?.id };
+		runtime.thinkingLevel = pi.getThinkingLevel();
 		await ensureRuntime(pi, ctx);
-		customOverlay = null;
 
 		const branch = ctx.sessionManager.getBranch();
 		const sessionFile = ctx.sessionManager.getSessionFile();
@@ -1387,11 +1397,19 @@ export default function (pi: ExtensionAPI) {
 			} else {
 				// No exact match → treat as overlay.
 				runtime.currentMode = CUSTOM_MODE_NAME;
-				customOverlay = getCurrentSelectionSpec(pi, ctx);
 			}
 		}
 
 		applyEditor(pi, ctx);
+	});
+
+	pi.on("thinking_level_select", (_event, ctx) => {
+		if (runtime.applying || pi.getThinkingLevel() === runtime.thinkingLevel) return;
+		if (runtime.currentMode !== CUSTOM_MODE_NAME) {
+			runtime.lastRealMode = runtime.currentMode;
+		}
+		runtime.currentMode = CUSTOM_MODE_NAME;
+		if (ctx.hasUI) requestEditorRender?.();
 	});
 
 	pi.on("model_select", async (event, ctx) => {
@@ -1408,12 +1426,6 @@ export default function (pi: ExtensionAPI) {
 			runtime.lastRealMode = runtime.currentMode;
 		}
 		runtime.currentMode = CUSTOM_MODE_NAME;
-
-		customOverlay = {
-			provider: event.model.provider,
-			modelId: event.model.id,
-			thinkingLevel: pi.getThinkingLevel(),
-		};
 
 		// Do not persist/select custom.
 		if (ctx.hasUI) {
