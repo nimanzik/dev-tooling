@@ -93,7 +93,7 @@ Commits-style subject.
 - One logical change per commit: group related changes logically (docs,
   features, tests etc).
 - Show user a plan with proposed commits and files, and wait for explicit.
-  approval ("yes", "proceed", "lgtm").
+  approval (e.g., "yes", "proceed", "lgtm", "go ahead", "approve" etc.)
 - Present tense: "add" not "added".
 - Imperative mood: "fix bug" not "fixes bug".
 - Reference issues when relevant: `Closes #123`, `Refs #456`.
