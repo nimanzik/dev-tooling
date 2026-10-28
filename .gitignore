@@ -19,3 +19,5 @@ wheels/
 !sample_config.json
 !.pre-commit-config.yaml
 !mcp-config.json
+
+.scratch/
