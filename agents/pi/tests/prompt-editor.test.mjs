@@ -18,9 +18,17 @@ const test = piTui
 	: (name, fn) => nodeTest(name, { skip: "@earendil-works/pi-tui not available; set NODE_PATH to a Pi install" }, fn);
 
 const { Input, SelectList, fuzzyFilter, getKeybindings, truncateToWidth } = piTui ?? {};
-const pickModel = vm.runInNewContext(stripTypeScriptTypes(pickerSource) + "\npickModelForModeUI", {
-	Input, SelectList, fuzzyFilter, truncateToWidth,
-});
+let pickModel;
+if (piTui) {
+	const source = readFileSync(new URL("../extensions/prompt-editor.ts", import.meta.url), "utf8");
+	const start = source.indexOf("async function pickModelForModeUI(");
+	const end = source.indexOf("async function pickThinkingLevelForModeUI(");
+	if (start === -1 || end <= start) throw new Error("prompt-editor.ts marker(s) moved; update this test");
+	const pickerSource = source.slice(start, end);
+	pickModel = vm.runInNewContext(stripTypeScriptTypes(pickerSource) + "\npickModelForModeUI", {
+		Input, SelectList, fuzzyFilter, truncateToWidth,
+	});
+}
 const models = [
 	{ provider: "first", id: "shared" },
 	{ provider: "second", id: "shared" },
