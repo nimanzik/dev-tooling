@@ -60,8 +60,9 @@ async function fileExists(p: string): Promise<boolean> {
 	try {
 		await fs.stat(p);
 		return true;
-	} catch {
-		return false;
+	} catch (err: any) {
+		if (err?.code === "ENOENT") return false;
+		throw err;
 	}
 }
 
@@ -253,8 +254,20 @@ function normalizeThinkingLevel(level: unknown): ThinkingLevel | undefined {
 }
 
 function sanitizeModeSpec(spec: unknown): ModeSpec {
-	const obj = (spec && typeof spec === "object" ? spec : {}) as Record<string, unknown>;
+	if (!spec || typeof spec !== "object" || Array.isArray(spec)) {
+		throw new Error("Invalid mode specification");
+	}
+	const obj = spec as Record<string, unknown>;
+	for (const field of ["provider", "modelId", "color"]) {
+		if (obj[field] !== undefined && typeof obj[field] !== "string") {
+			throw new Error(`Invalid mode field: ${field}`);
+		}
+	}
+	if (obj.thinkingLevel !== undefined && !normalizeThinkingLevel(obj.thinkingLevel)) {
+		throw new Error("Invalid mode thinking level");
+	}
 	return {
+		...obj,
 		provider: typeof obj.provider === "string" ? obj.provider : undefined,
 		modelId: typeof obj.modelId === "string" ? obj.modelId : undefined,
 		thinkingLevel: normalizeThinkingLevel(obj.thinkingLevel),
@@ -303,10 +316,15 @@ function ensureDefaultModeEntries(file: ModesFile, ctx: ExtensionContext, pi: Ex
 	}
 }
 
-async function loadModesFile(filePath: string, ctx: ExtensionContext, pi: ExtensionAPI): Promise<ModesFile> {
+async function loadModesFile(filePath: string, ctx: ExtensionContext, pi: ExtensionAPI): Promise<ModesFile | null> {
 	try {
 		const raw = await fs.readFile(filePath, "utf8");
 		const parsed = JSON.parse(raw) as Record<string, unknown>;
+		if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) ||
+			parsed.version !== 1 || !parsed.modes || typeof parsed.modes !== "object" || Array.isArray(parsed.modes) ||
+			(parsed.currentMode !== undefined && typeof parsed.currentMode !== "string")) {
+			throw new Error("Invalid modes configuration");
+		}
 		const currentMode = typeof parsed.currentMode === "string" ? parsed.currentMode : "default";
 		const modesRaw = parsed.modes && typeof parsed.modes === "object" ? (parsed.modes as Record<string, unknown>) : {};
 		const modes: Record<string, ModeSpec> = {};
@@ -314,14 +332,18 @@ async function loadModesFile(filePath: string, ctx: ExtensionContext, pi: Extens
 			modes[k] = sanitizeModeSpec(v);
 		}
 		const file: ModesFile = {
+			...parsed,
 			version: 1,
 			currentMode,
 			modes,
 		};
 		ensureDefaultModeEntries(file, ctx, pi);
 		return file;
-	} catch {
-		return createDefaultModes(ctx, pi);
+	} catch (err: any) {
+		if (err?.code === "ENOENT") return null;
+		const message = `Cannot load modes from ${filePath}: ${err.message}`;
+		if (ctx.hasUI) ctx.ui.notify(message, "error");
+		throw new Error(message, { cause: err });
 	}
 }
 
@@ -364,7 +386,12 @@ function formatModeLabel(mode: string): string {
 
 async function resolveModesPath(cwd: string): Promise<string> {
 	const projectPath = getProjectModesPath(cwd);
-	if (await fileExists(projectPath)) return projectPath;
+	try {
+		if (await fileExists(projectPath)) return projectPath;
+	} catch {
+		// A non-ENOENT stat error (e.g. EACCES on a foreign-owned .pi) means we
+		// can't read the project modes file; fall back to the global one.
+	}
 	return getGlobalModesPath();
 }
 
@@ -464,10 +491,9 @@ async function ensureRuntime(pi: ExtensionAPI, ctx: ExtensionContext): Promise<v
 	const fileChanged = filePathChanged || runtime.fileMtimeMs !== mtimeMs;
 
 	if (fileChanged) {
+		const loaded = await loadModesFile(filePath, ctx, pi) ?? createDefaultModes(ctx, pi);
 		runtime.filePath = filePath;
 		runtime.fileMtimeMs = mtimeMs;
-
-		const loaded = await loadModesFile(filePath, ctx, pi);
 		// Normalize/ensure defaults *before* we snapshot baseline so later persistence
 		// only reflects explicit user actions ("store").
 		ensureDefaultModeEntries(loaded, ctx, pi);
@@ -500,14 +526,14 @@ async function persistRuntime(
 	if (!runtime.filePath) return;
 
 	// Configuration edits normally leave currentMode alone. Explicit mode selections
-	// include it so a fresh session can start in the last selected mode.
+	// record it for shared configuration; fresh sessions still start in default.
 	runtime.baseline ??= cloneModesFile(runtime.data);
 	const patch = computeModesPatch(runtime.baseline, runtime.data, includeCurrentMode);
 	if (!patch) return;
 
 	await withFileLock(runtime.filePath, async () => {
 		// Merge our local patch into the latest on disk to avoid clobbering other agents.
-		const latest = await loadModesFile(runtime.filePath, ctx, pi);
+		const latest = await loadModesFile(runtime.filePath, ctx, pi) ?? cloneModesFile(runtime.baseline!);
 		applyModesPatch(latest, patch);
 		ensureDefaultModeEntries(latest, ctx, pi);
 		await saveModesFile(runtime.filePath, latest);
@@ -609,8 +635,7 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 		runtime.currentMode = CUSTOM_MODE_NAME;
 		customOverlay = getCurrentSelectionSpec(pi, ctx);
 	} else {
-		// Persist only real, successfully applied modes. The shared modes file carries
-		// this selection across brand-new sessions without coupling it to session entries.
+		// Record successful real-mode selections, not a startup preference.
 		runtime.data.currentMode = mode;
 		await persistRuntime(pi, ctx, true);
 	}
@@ -1337,14 +1362,18 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
-	pi.on("session_start", async (_event, ctx) => {
+	pi.on("session_start", async (event, ctx) => {
 		lastObservedModel = { provider: ctx.model?.provider, modelId: ctx.model?.id };
 		await ensureRuntime(pi, ctx);
 		customOverlay = null;
 
 		const branch = ctx.sessionManager.getBranch();
-		const isFreshSession = branch.every(
-			(entry) => entry.type === "model_change" || entry.type === "thinking_level_change",
+		const sessionFile = ctx.sessionManager.getSessionFile();
+		// Fresh persistent sessions have no file until their first conversation message.
+		const isFreshSession = event.reason === "new" || (
+			event.reason === "startup" &&
+			!(sessionFile && await fileExists(sessionFile)) &&
+			branch.every((entry) => entry.type === "model_change" || entry.type === "thinking_level_change")
 		);
 		if (isFreshSession) {
 			// Pi records the default model/thinking level before session_start, even for a
