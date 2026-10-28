@@ -583,7 +583,6 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 	// "custom" is a runtime-only overlay mode.
 	if (mode === CUSTOM_MODE_NAME) {
 		runtime.currentMode = CUSTOM_MODE_NAME;
-		customOverlay = getCurrentSelectionSpec(pi, ctx);
 		if (ctx.hasUI) requestEditorRender?.();
 		return;
 	}
@@ -598,7 +597,6 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 
 	runtime.currentMode = mode;
 	runtime.lastRealMode = mode;
-	customOverlay = null;
 
 	runtime.applying = true;
 	let modelAppliedOk = true;
@@ -633,7 +631,6 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 	// switching between models with different thinking capabilities.
 	if (!modelAppliedOk) {
 		runtime.currentMode = CUSTOM_MODE_NAME;
-		customOverlay = getCurrentSelectionSpec(pi, ctx);
 	} else {
 		// Record successful real-mode selections, not a startup preference.
 		runtime.data.currentMode = mode;
@@ -688,10 +685,9 @@ async function handleModeChoiceUI(pi: ExtensionAPI, ctx: ExtensionContext, choic
 			return;
 		}
 
-		// "store": overwrite target mode with the current overlay selection (keep target color if set)
+		// "store": capture the current selection (keep target color if set).
 		await ensureRuntime(pi, ctx);
-		const overlay = customOverlay ?? getCurrentSelectionSpec(pi, ctx);
-		await storeSelectionIntoMode(pi, ctx, choice, overlay);
+		await storeSelectionIntoMode(pi, ctx, choice, getCurrentSelectionSpec(pi, ctx));
 		await applyMode(pi, ctx, choice);
 		ctx.ui.notify(`Stored ${CUSTOM_MODE_NAME} into \"${choice}\"`, "info");
 		return;
@@ -756,7 +752,7 @@ async function addModeUI(pi: ExtensionAPI, ctx: ExtensionContext): Promise<strin
 		}
 
 		// Default new modes to the current selection so they behave as expected immediately.
-		const selection = customOverlay ?? getCurrentSelectionSpec(pi, ctx);
+		const selection = getCurrentSelectionSpec(pi, ctx);
 		runtime.data.modes[name] = {
 			provider: selection.provider,
 			modelId: selection.modelId,
@@ -841,7 +837,6 @@ async function editModeUI(pi: ExtensionAPI, ctx: ExtensionContext, mode: string)
 
 			if (runtime.currentMode === modeName) {
 				runtime.currentMode = CUSTOM_MODE_NAME;
-				customOverlay = getCurrentSelectionSpec(pi, ctx);
 			}
 			if (runtime.lastRealMode === modeName) {
 				runtime.lastRealMode = "default";
@@ -1241,9 +1236,6 @@ function buildHistoryList(currentSession: PromptEntry[], previousSessions: Promp
 	return deduped.slice(-MAX_HISTORY_ENTRIES);
 }
 
-// Overlay mode state ("custom"). Not selectable, not cycled into.
-let customOverlay: ModeSpec | null = null;
-
 let loadCounter = 0;
 
 function historiesMatch(a: PromptEntry[], b: PromptEntry[]): boolean {
@@ -1337,7 +1329,7 @@ export default function (pi: ExtensionAPI) {
 					return;
 				}
 
-				const selection = customOverlay ?? getCurrentSelectionSpec(pi, ctx);
+				const selection = getCurrentSelectionSpec(pi, ctx);
 				await storeSelectionIntoMode(pi, ctx, target, selection);
 				if (ctx.hasUI) ctx.ui.notify(`Stored current selection into "${target}"`, "info");
 				return;
@@ -1365,7 +1357,6 @@ export default function (pi: ExtensionAPI) {
 	pi.on("session_start", async (event, ctx) => {
 		lastObservedModel = { provider: ctx.model?.provider, modelId: ctx.model?.id };
 		await ensureRuntime(pi, ctx);
-		customOverlay = null;
 
 		const branch = ctx.sessionManager.getBranch();
 		const sessionFile = ctx.sessionManager.getSessionFile();
@@ -1387,11 +1378,19 @@ export default function (pi: ExtensionAPI) {
 			} else {
 				// No exact match → treat as overlay.
 				runtime.currentMode = CUSTOM_MODE_NAME;
-				customOverlay = getCurrentSelectionSpec(pi, ctx);
 			}
 		}
 
 		applyEditor(pi, ctx);
+	});
+
+	pi.on("thinking_level_select", (_event, ctx) => {
+		if (runtime.applying) return;
+		if (runtime.currentMode !== CUSTOM_MODE_NAME) {
+			runtime.lastRealMode = runtime.currentMode;
+		}
+		runtime.currentMode = CUSTOM_MODE_NAME;
+		if (ctx.hasUI) requestEditorRender?.();
 	});
 
 	pi.on("model_select", async (event, ctx) => {
@@ -1408,12 +1407,6 @@ export default function (pi: ExtensionAPI) {
 			runtime.lastRealMode = runtime.currentMode;
 		}
 		runtime.currentMode = CUSTOM_MODE_NAME;
-
-		customOverlay = {
-			provider: event.model.provider,
-			modelId: event.model.id,
-			thinkingLevel: pi.getThinkingLevel(),
-		};
 
 		// Do not persist/select custom.
 		if (ctx.hasUI) {
