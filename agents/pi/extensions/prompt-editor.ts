@@ -1129,11 +1129,6 @@ function collectUserPromptsFromEntries(entries: Array<any>): PromptEntry[] {
 	return prompts;
 }
 
-function getSessionDirForCwd(cwd: string): string {
-	const safePath = `--${cwd.replace(/^[/\\]/, "").replace(/[/\\:]/g, "-")}--`;
-	return path.join(getGlobalAgentDir(), "sessions", safePath);
-}
-
 async function readTail(filePath: string, maxBytes = 256 * 1024): Promise<string> {
 	let fileHandle: fs.FileHandle | undefined;
 	try {
@@ -1162,8 +1157,27 @@ async function readTail(filePath: string, maxBytes = 256 * 1024): Promise<string
 	}
 }
 
-async function loadPromptHistoryForCwd(cwd: string, excludeSessionFile?: string): Promise<PromptEntry[]> {
-	const sessionDir = getSessionDirForCwd(path.resolve(cwd));
+async function sessionMatchesCwd(filePath: string, cwd: string): Promise<boolean> {
+	let fileHandle: fs.FileHandle | undefined;
+	try {
+		fileHandle = await fs.open(filePath, "r");
+		// Session metadata is on the first line, which may be outside the bounded tail.
+		// shortcut: headers over 16 KiB are skipped, increase the bound if Pi adds larger metadata.
+		const buffer = Buffer.alloc(16 * 1024);
+		const { bytesRead } = await fileHandle.read(buffer, 0, buffer.length, 0);
+		const chunk = buffer.subarray(0, bytesRead).toString("utf8");
+		const newline = chunk.indexOf("\n");
+		if (newline < 0) return false;
+		const header = JSON.parse(chunk.slice(0, newline));
+		return header?.type === "session" && typeof header.cwd === "string" && path.resolve(header.cwd) === path.resolve(cwd);
+	} catch {
+		return false;
+	} finally {
+		await fileHandle?.close();
+	}
+}
+
+async function loadPromptHistoryForCwd(cwd: string, sessionDir: string, excludeSessionFile?: string): Promise<PromptEntry[]> {
 	const resolvedExclude = excludeSessionFile ? path.resolve(excludeSessionFile) : undefined;
 	const prompts: PromptEntry[] = [];
 
@@ -1194,11 +1208,12 @@ async function loadPromptHistoryForCwd(cwd: string, excludeSessionFile?: string)
 
 	for (const file of sortedFiles) {
 		if (resolvedExclude && path.resolve(file.filePath) === resolvedExclude) continue;
+		if (!(await sessionMatchesCwd(file.filePath, cwd))) continue;
 
 		const tail = await readTail(file.filePath);
 		if (!tail) continue;
 		const lines = tail.split("\n").filter(Boolean);
-		for (const line of lines) {
+		for (const line of lines.reverse()) {
 			let entry: any;
 			try {
 				entry = JSON.parse(line);
@@ -1284,7 +1299,7 @@ function applyEditor(pi: ExtensionAPI, ctx: ExtensionContext) {
 	setEditor(pi, ctx, immediateHistory);
 
 	void (async () => {
-		const previousPrompts = await loadPromptHistoryForCwd(ctx.cwd, sessionFile ?? undefined);
+		const previousPrompts = await loadPromptHistoryForCwd(ctx.cwd, ctx.sessionManager.getSessionDir(), sessionFile ?? undefined);
 		if (currentLoad !== loadCounter) return;
 		if (ctx.ui.getEditorText() !== initialText) return;
 		const history = buildHistoryList(currentPrompts, previousPrompts);
