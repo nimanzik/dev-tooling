@@ -28,9 +28,16 @@ an old thinking level after the user changes it.
 Store commands, selector store actions, and new modes now read the active
 model and thinking level instead of a cached custom selection. Existing
 mode colours remain unchanged. The supported `thinking_level_select` event
-updates the indicator and requests a render for manual changes. The existing
-application guard keeps model and thinking events from changing an applied
-mode to `custom`. Removed the unused selection cache.
+updates the indicator and requests a render for manual changes. Removed the
+unused selection cache.
+
+The integration review found that Pi dispatches thinking events without waiting
+for delivery, and an earlier handler can delay delivery beyond the application
+guard. The extension now retains the effective thinking level after application
+and checks the active selection when an event arrives. Delayed intermediate
+levels do not change the applied mode to `custom`, including model clamping.
+Manual changes away from the effective selection still show `custom`.
+Mode application does not wait for thinking handlers.
 
 Validation:
 
@@ -39,10 +46,18 @@ Validation:
 - TDD: manual thinking changes first left the indicator at `default`; after
   the event handler, it becomes `custom` and requests a render. Applying a
   mode then retains its named indicator and stores its active selection.
-- With Pi dependencies in `NODE_PATH`: all 17 prompt-editor tests pass.
-- Without `NODE_PATH`: 12 tests pass; five existing picker tests skip because
-  their Pi TUI dependency is unavailable.
-- Type-stripped extension module and both test files pass syntax checks.
+- Integration red: 21 tests passed and one failed because the modes harness
+  lacked `getSessionDir()`. Returning an isolated temporary session directory
+  restored all 22 tests.
+- Delayed-event red: an earlier synchronous no-op handler caused applying
+  `fast` to display `custom`. The effective-selection check made it pass.
+  Further tests cover delayed intermediate model clamping, application without
+  waiting for delivery, no-op setters, clamped setters, and manual changes.
+- Combined validation on `ab43e11`: all 25 prompt-editor tests pass with
+  `NODE_PATH=/home/nima/.pi/agent/install/releases/1.4.0/node_modules`.
+- With `env -u NODE_PATH`: 20 tests pass and five existing picker tests skip
+  because their Pi TUI dependency is unavailable. All history tests pass.
+- Type-stripped extension module and all three test files pass syntax checks.
   Direct Node syntax checking does not parse this TypeScript module.
 - Markdown lint and Git whitespace checks pass.
 

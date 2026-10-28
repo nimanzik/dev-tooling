@@ -40,16 +40,25 @@ merged prompts remain bounded.
 
 Added `agents/pi/tests/prompt-editor-history.test.mjs` with five startup tests.
 The tests use temporary session files and observe the editor history boundary,
-without exercising keyboard handling. Existing modes tests are unchanged.
+without exercising keyboard handling. Integration review also updated the modes
+harness to return an isolated temporary session directory through `getSessionDir()`.
 
-Validation completed in `/tmp/dev-tooling-history-04`:
+Validation completed in `/tmp/dev-tooling-review-fixes` on `ab43e11`:
 
 - Red: the 40-prompt test recalled 30 through 1 instead of 40 through 11.
   The custom-directory test then failed because history was not loaded.
   The project-isolation test exposed unrelated and invalid-header prompts.
-- Green: all 18 prompt-editor tests passed with the installed Pi `NODE_PATH`.
-  Without `NODE_PATH`, 13 passed and five existing picker tests skipped because
-  `pi-tui` was unavailable. All five history tests passed in both runs.
+- Integration red: the combined suite had 21 passes and one failure because
+  the modes harness lacked `getSessionDir()`. The isolated directory fixed it.
+- Delayed-event red: applying `fast` displayed `custom` after an earlier no-op
+  thinking handler delayed event delivery. The effective-selection check in
+  ticket 03 fixed it. Regression coverage also includes delayed intermediate
+  clamping, application without waiting for delivery, no-op and clamped setters,
+  and subsequent manual thinking changes.
+- Green: all 25 prompt-editor tests pass with
+  `NODE_PATH=/home/nima/.pi/agent/install/releases/1.4.0/node_modules`.
+  With `env -u NODE_PATH`, 20 pass and five existing picker tests skip because
+  `pi-tui` is unavailable. All five history tests pass in both runs.
 - Syntax checks passed for the tests and TypeScript after stripping types.
   `git diff --check` and Markdown lint passed.
 

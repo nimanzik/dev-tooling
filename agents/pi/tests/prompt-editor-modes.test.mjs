@@ -15,18 +15,26 @@ async function setup(t, options = {}) {
 	const dir = await fs.mkdtemp(path.join(os.tmpdir(), "pi-modes-"));
 	t.after(() => fs.rm(dir, { recursive: true, force: true }));
 	const file = path.join(dir, "modes.json");
-	function processHarness({ thinking = "high", branch = [], modelId = "original", afterModel, sessionFile } = {}) {
+	const sessionDir = path.join(dir, "sessions");
+	await fs.mkdir(sessionDir);
+	function processHarness({ thinking = "high", branch = [], modelId = "original", afterModel, sessionFile,
+		beforeThinking, modelThinking, clampThinking = (level) => level } = {}) {
 		const commands = new Map();
 		const events = new Map();
 		const notifications = [];
 		const applied = [];
+		const thinkingEvents = [];
+		async function emitThinking(event) {
+			if (beforeThinking) await beforeThinking(event);
+			await events.get("thinking_level_select")?.(event, ctx);
+		}
 		let editor;
 		let renders = 0;
 		const model = { provider: "test", id: modelId, reasoning: true };
 		const ctx = {
 			cwd: path.join(dir, "project"), hasUI: false, model,
 			modelRegistry: { find: (provider, id) => ({ provider, id, reasoning: true }) },
-			sessionManager: { getBranch: () => branch, getSessionFile: () => sessionFile },
+			sessionManager: { getBranch: () => branch, getSessionFile: () => sessionFile, getSessionDir: () => sessionDir },
 			ui: {
 				notify: (message, level) => notifications.push({ message, level }),
 				theme: { fg: (_color, text) => text },
@@ -42,14 +50,15 @@ async function setup(t, options = {}) {
 			getThinkingLevel: () => thinking,
 			setThinkingLevel: (level) => {
 				const previousLevel = thinking;
-				thinking = level;
+				thinking = clampThinking(level);
 				applied.push(["thinking", level]);
-				if (level !== previousLevel) {
-					void events.get("thinking_level_select")?.({ type: "thinking_level_select", level, previousLevel }, ctx);
+				if (thinking !== previousLevel) {
+					thinkingEvents.push(emitThinking({ type: "thinking_level_select", level: thinking, previousLevel }));
 				}
 			},
 			setModel: async (selected) => {
 				applied.push(["model", selected.id]);
+				if (modelThinking) pi.setThinkingLevel(modelThinking);
 				await events.get("model_select")?.({ type: "model_select", model: selected, source: "set" }, ctx);
 				await afterModel?.();
 				return true;
@@ -62,13 +71,14 @@ async function setup(t, options = {}) {
 		register(pi);
 		return {
 			ctx, applied, notifications,
+			flushThinking: () => Promise.all(thinkingEvents),
 			get indicator() { return editor?.modeLabelProvider(); },
 			get renders() { return renders; },
 			changeModel: (id) => events.get("model_select")({ type: "model_select", model: { provider: "test", id, reasoning: true }, source: "set" }, ctx),
 			changeThinking: async (level) => {
 				const previousLevel = thinking;
 				thinking = level;
-				await events.get("thinking_level_select")?.({ type: "thinking_level_select", level, previousLevel }, ctx);
+				await emitThinking({ type: "thinking_level_select", level, previousLevel });
 			},
 			mode: (args) => commands.get("mode")(args, ctx),
 			start: (reason = "startup") => events.get("session_start")({ type: "session_start", reason }, ctx),
@@ -257,4 +267,47 @@ test("manual thinking changes update the mode indicator and request a render", a
 	assert.deepEqual((await h.read()).modes.review, {
 		provider: "test", modelId: "original", thinkingLevel: "high",
 	});
+});
+
+test("an earlier synchronous thinking handler does not turn an applied fast mode custom", async (t) => {
+	const h = await setup(t);
+	const session = h.processHarness({ beforeThinking: () => {} });
+	session.ctx.hasUI = true;
+	await session.start("resume");
+	await session.mode("fast");
+	await session.flushThinking();
+	assert.equal(session.indicator, "fast");
+	await session.changeThinking("low");
+	assert.equal(session.indicator, "custom");
+});
+
+test("delayed model clamping and explicit thinking events keep the final applied selection", async (t) => {
+	const h = await setup(t);
+	let release;
+	const gate = new Promise((resolve) => { release = resolve; });
+	const session = h.processHarness({ beforeThinking: () => gate, modelThinking: "off" });
+	session.ctx.hasUI = true;
+	await session.start("resume");
+	await session.mode("default");
+	assert.equal(session.indicator, "default", "applying a model must not wait for thinking handlers");
+	release();
+	await session.flushThinking();
+	assert.equal(session.indicator, "default", "an intermediate off event must not override the final high selection");
+	await session.changeThinking("low");
+	assert.equal(session.indicator, "custom");
+});
+
+test("no-op and clamped applications do not hide the next manual thinking change", async (t) => {
+	for (const clampThinking of [(level) => level, () => "off"]) {
+		const h = await setup(t);
+		const session = h.processHarness({ thinking: "off", beforeThinking: () => {}, clampThinking });
+		session.ctx.hasUI = true;
+		await session.start("resume");
+		await session.mode("fast");
+		await session.mode("default");
+		await session.flushThinking();
+		assert.equal(session.indicator, "default");
+		await session.changeThinking("low");
+		assert.equal(session.indicator, "custom");
+	}
 });

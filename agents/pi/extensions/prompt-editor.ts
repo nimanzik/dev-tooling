@@ -468,6 +468,7 @@ type ModeRuntime = {
 	currentMode: string;
 	// guard against feedback loops when we switch model ourselves
 	applying: boolean;
+	thinkingLevel?: ThinkingLevel;
 };
 
 const runtime: ModeRuntime = {
@@ -623,6 +624,8 @@ async function applyMode(pi: ExtensionAPI, ctx: ExtensionContext, mode: string):
 			pi.setThinkingLevel(spec.thinkingLevel);
 		}
 	} finally {
+		// Thinking events can arrive after this guard clears; retain the effective (clamped) selection.
+		runtime.thinkingLevel = pi.getThinkingLevel();
 		runtime.applying = false;
 	}
 
@@ -1371,6 +1374,7 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("session_start", async (event, ctx) => {
 		lastObservedModel = { provider: ctx.model?.provider, modelId: ctx.model?.id };
+		runtime.thinkingLevel = pi.getThinkingLevel();
 		await ensureRuntime(pi, ctx);
 
 		const branch = ctx.sessionManager.getBranch();
@@ -1400,7 +1404,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("thinking_level_select", (_event, ctx) => {
-		if (runtime.applying) return;
+		if (runtime.applying || pi.getThinkingLevel() === runtime.thinkingLevel) return;
 		if (runtime.currentMode !== CUSTOM_MODE_NAME) {
 			runtime.lastRealMode = runtime.currentMode;
 		}
