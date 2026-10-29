@@ -12,6 +12,7 @@ pi install https://github.com/earendil-works/pi-review
 pi install https://github.com/dodo-reach/pi-clarify
 pi install https://github.com/dbachelder/pi-btw
 pi install https://github.com/nicobailon/visual-explainer
+pi install https://github.com/tintinweb/pi-subagents.git
 pi install npm:@ff-labs/pi-fff
 pi install npm:@plannotator/pi-extension
 pi install npm:pi-simplify
