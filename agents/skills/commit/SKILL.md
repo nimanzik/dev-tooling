@@ -32,7 +32,7 @@ Commits-style subject.
 ## Commit Types
 
 | Type       | Purpose                        |
-| ---------- | -------------------------------|
+| ---------- | ------------------------------ |
 | `feat`     | New feature                    |
 | `fix`      | Bug fix                        |
 | `docs`     | Documentation only             |
@@ -47,8 +47,9 @@ Commits-style subject.
 
 ## Notes
 
-- Body is OPTIONAL. Put technical details and explanations that do not fit
-  the concise subject in the body, separated from the subject by a blank line.
+- Body is OPTIONAL but recommended. Put technical details and explanations that
+  do not fit the concise subject in the body, separated from the subject by a
+  blank line.
 - Wrap body text at about 72 columns and separate paragraphs with blank lines.
 - Bullets are allowed. Use a hyphen or asterisk followed by a space, separate
   items with blank lines, and indent continuation lines to align with the text.
