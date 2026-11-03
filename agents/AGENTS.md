@@ -47,3 +47,13 @@ matches it exactly; otherwise ask again. Default stop point: local edits.
 - Before delegating `tdd` implementation, obtain the user's seam approval
   and pass the approved seams to each implementer. Implementers must
   request approval through the parent before testing additional seams.
+
+## pi-review sessions
+
+A user message that starts with `# Review Guidelines` and contains
+`Please perform a code review with the following focus:` comes from the
+pi-review `/review` command. In that review branch:
+
+- Follow only that rubric and its output format.
+- Do not load `code-review`, `ponytail-review`, or other review skills.
+- Do not spawn subagents or workflows; review directly in this session.
