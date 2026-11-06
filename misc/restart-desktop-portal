@@ -1,0 +1,14 @@
+#!/bin/sh
+# Fix links that do not open from Telegram or Markdown viewers under Sway.
+# After logging out of Plasma, the desktop portal restarted before Sway
+# started, without DISPLAY or WAYLAND_DISPLAY. Firefox then failed with
+# "Error: no DISPLAY environment variable specified".
+# Sway imported the correct variables, but the running portal kept its old
+# environment. Restarting the portal lets it inherit the current variables.
+# User service lingering was enabled; the activation caller was not identified.
+#
+# Run manually inside Sway after its session environment has been imported:
+#   /home/nima/bin/restart-desktop-portal
+# Restarting may interrupt screen sharing or active file dialogs.
+# This script is not installed as a startup task.
+exec systemctl --user restart xdg-desktop-portal.service
