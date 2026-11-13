@@ -19,3 +19,4 @@ pi install npm:pi-simplify
 pi install npm:pi-web-access
 pi install npm:pi-intercom
 pi install npm:pi-cached-compaction
+pi install npm:pi-better
