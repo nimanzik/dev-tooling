@@ -17,6 +17,8 @@ pi install npm:@ff-labs/pi-fff
 pi install npm:@plannotator/pi-extension
 pi install npm:pi-simplify
 pi install npm:pi-web-access
-pi install npm:pi-intercom
 pi install npm:pi-cached-compaction
 pi install npm:pi-better
+# Until the PR is merged, install from the fork below.
+# pi install npm:pi-intercom
+pi install https://github.com/nimanzik/pi-intercom/@fix/compose-editing
