@@ -37,8 +37,8 @@ matches it exactly; otherwise ask again. Default stop point: local edits.
 
 ## Markdown
 
-- After editing Markdown, run `markdownlint` and fix every issue. If
-  `markdownlint-cli` is missing, ask the user to install it.
+- After editing Markdown, run `markdownlint-cli2` and fix every issue. If
+  `markdownlint-cli2` is missing, ask the user to install it.
 
 ## Matt Pocock's skills – Pi delegation compatibility
 
