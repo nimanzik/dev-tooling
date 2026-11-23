@@ -2,10 +2,10 @@
 # To config Pi to enable alias expansion, add this line to Pi's settings.json:
 # "shellCommandPrefix": "shopt -s expand_aliases\nsource ~/.bash_aliases"
 
-# Prompt before any removal and overwrite
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
+## Prompt before any removal and overwrite
+#alias rm='rm -i'
+#alias cp='cp -i'
+#alias mv='mv -i'
 
 # Some ls aliases
 alias ll='ls -lF'
