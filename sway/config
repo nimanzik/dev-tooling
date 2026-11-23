@@ -35,7 +35,7 @@ output * bg ${HOME}/.wallpapers/fuji/image fill
 # Laptop (main display)
 output eDP-1 resolution 1920x1080 scale 1 position 0 0
 # External 4K Ultra HD monitor (secondary display)
-output HDMI-A-1 resolution 3840x2160 scale 2 position 1920 0
+#output HDMI-A-1 resolution 3840x2160 scale 2 position 1920 0
 # Make workspace 1 belong to the laptop
 workspace 1 output eDP-1
 # Make the laptop focused at startup
