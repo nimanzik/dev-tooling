@@ -3,9 +3,9 @@
 ## Commands
 
 - Run every Python command through `uv`: `uv run python ...`
-- **Linting**: `uvx ruff check --fix`
-- **Formatting**: `uvx ruff format`
-- **Type checking**: `uvx ty check`
+- **Lint, format, type-check**: if the tool is in the project's dev
+  dependencies, use `uv run ruff check --fix`, `uv run ruff format`,
+  `uv run ty check`. Otherwise use `uvx` instead of `uv run`.
 - **Testing**: `uv run pytest tests -v --tb=short`
 
 ## Dependencies
