@@ -38,7 +38,10 @@
 
 - Place tests in `tests/` at the project root, mirroring the source layout:
   for a module with submodules, place their tests in
-  `tests/test_<module-name>/`.
+  `tests/test_<module-name>/`. For example, tests for
+  `src/pkg/api/app.py` go in `tests/test_pkg/test_api/test_app.py`, and
+  tests that drive the whole `pkg` through one entry point go in
+  `tests/test_pkg/`.
 - Group tests for the same function or class in a `Test<Name>` class, even
   when it has a single test (plain class, no `__init__`); share setup through
   fixtures.
