@@ -33,7 +33,7 @@ inline-quotes = "double"
 multiline-quotes = "double"
 
 [lint.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "sqlmodel.SQLModel"]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "pydantic_settings.BaseSettings", "sqlmodel.SQLModel"]
 runtime-evaluated-decorators = ["pydantic.validate_call", "pydantic.dataclasses.dataclass"]
 quote-annotations = false
 
