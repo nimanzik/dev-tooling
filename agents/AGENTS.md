@@ -22,6 +22,7 @@
 - Read-only git (`status`, `diff`, `log`, `show`) needs no approval.
 - Before any commit, load the `commit` skill.
 - In Python projects, commit to a feature branch.
+- Git hooks: prek, configured in `prek.toml`.
 
 ## High-impact actions
 
