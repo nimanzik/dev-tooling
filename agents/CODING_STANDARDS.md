@@ -1,19 +1,18 @@
 # Python coding standards
 
-## Imports
-
-- Put type-only imports in a `TYPE_CHECKING` block.
-
 ## Types
 
 - Every function has complete, accurate type hints.
 - Use `NDArray`, `Self`, and type unions with `|`.
 - Use built-in generics (`list`, `dict`) and abstract collection types from
   `collections.abc` where possible.
+- Put type-only imports in a `TYPE_CHECKING` block (with
+  `from __future__ import annotations`), except types needed at runtime by
+  Pydantic or SQLModel.
 
 ## Docstrings
 
-- Use NumPy style, max doc length 79 chars.
+- Use NumPy style, max line length 79 chars.
 - Use "or" instead of `|` in parameter type descriptions.
 - Use British English spelling (e.g., "modelling", "optimise", "colour").
 
@@ -24,14 +23,14 @@
 
 ## Logs and error messages
 
-- Use typed exception classes.
+- Raise specific or custom exception subclasses instead of bare `Exception`.
 - Begin messages with a capital letter, no ending period.
 - End progress actions with `...`, e.g. "Loading data...".
-- Quote in-text names.
+- Quote in-text names, e.g. "Column 'id' not found".
 
 ## Libraries
 
-- **Data validation models**: Pydantic, SQLModel.
+- **Data validation models**: Pydantic (SQLModel for database-backed models).
 - **DataFrame operations**: `polars`.
 
 ## Boundaries
@@ -45,12 +44,15 @@
 
 ## Tests
 
-- Place tests in `tests/` at the project root, mirroring the source layout:
-  for a module with submodules, place their tests in
-  `tests/test_<module-name>/`. For example, tests for
-  `src/pkg/api/app.py` go in `tests/test_pkg/test_api/test_app.py`, and
-  tests that drive the whole `pkg` through one entry point go in
-  `tests/test_pkg/`.
+- Place tests in `tests/` at the project root, mirroring the source layout
+  without the package directory: `src/my_package/api/client.py` is tested by
+  `tests/api/test_client.py` (include package directories only when `src/`
+  has multiple packages).
+- Split into `tests/unit/`, `tests/integration/`, and `tests/e2e/` when a
+  project has distinct test tiers, mirroring the source layout inside
+  `tests/unit/`. Small projects can use a flat `tests/`.
+- Keep shared fixtures in `tests/conftest.py`, narrower fixtures in
+  subdirectory `conftest.py` files, and static test data in `tests/data/`.
 - Group tests for the same function or class in a `Test<Name>` class, even
   when it has a single test (plain class, no `__init__`); share setup through
   fixtures.
