@@ -6,9 +6,9 @@
 - Use `NDArray`, `Self`, and type unions with `|`.
 - Use built-in generics (`list`, `dict`) and abstract collection types from
   `collections.abc` where possible.
-- Put type-only imports in a `TYPE_CHECKING` block (with
-  `from __future__ import annotations`), except types needed at runtime by
-  Pydantic or SQLModel.
+- Put type-only imports in a `TYPE_CHECKING` block (add
+  `from __future__ import annotations` on Python < 3.14), except types
+  needed at runtime by Pydantic or SQLModel.
 
 ## Docstrings
 
