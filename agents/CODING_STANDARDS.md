@@ -31,8 +31,17 @@
 
 ## Libraries
 
-- **Data validation models**: Pydantic v2 `BaseModel` or `SQLModel`.
+- **Data validation models**: Pydantic, SQLModel.
 - **DataFrame operations**: `polars`.
+
+## Boundaries
+
+- Validate external data where it enters the program, with the validation
+  library from Libraries that fits its shape. Branch on validated values,
+  never on the truthiness of raw parsed data, so malformed input fails
+  loudly.
+- Validate settings at startup, so an invalid value stops the program
+  instead of failing each request.
 
 ## Tests
 
@@ -45,3 +54,11 @@
 - Group tests for the same function or class in a `Test<Name>` class, even
   when it has a single test (plain class, no `__init__`); share setup through
   fixtures.
+- When the code compares test data with the current time (retention,
+  "last 24 hours"), build that data from the current time, so the test
+  cannot pass or fail because of the calendar. A fixed dataset that the
+  code never compares with the current time keeps its fixed dates.
+- Test a boundary with data on both sides of it, chosen so that checking the
+  wrong field or the wrong side fails the test.
+- An assertion over a collection, such as `all()` or `any()`, also checks the
+  collection's size or exact contents, so an empty result fails.
